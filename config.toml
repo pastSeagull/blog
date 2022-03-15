@@ -2,7 +2,7 @@ baseurl = "https://example.com"
 languageCode = "en"
 title = "Gaviota"
 theme = "hemingway"
-copyright = "&copy; <a href=\"https://github.com/tanksuzuki\">Asuka Suzuki</a> 2016"
+copyright = "&copy; <a href=\"https://github.com/pastSeagull\">Gaviota</a> 2016"
 disqusShortname = "shortname"
 googleAnalytics = ""
 
@@ -13,11 +13,11 @@ style = "github"
 languages = ["go", "dockerfile"]
 
 [[params.social]]
-url = "https://github.com/tanksuzuki"
+url = "https://github.com/pastSeagull"
 fa_icon = "fa-github"
 
 [[params.social]]
-url = "https://twitter.com/tanksuzuki"
+url = "https://twitter.com/pastSeagull"
 fa_icon = "fa-twitter"
 
 [[params.social]]

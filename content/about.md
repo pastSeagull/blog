@@ -1,30 +1,18 @@
-+++
-title = "About Hugo"
-date = "2014-04-09"
-menu = "main"
-+++
+---
+title:
+date: 2020-08-27 13:27:16
+---
+关于本站点，主要是分享一下个人所学的一些笔记，以及个人的生活杂谈等。之前也折腾过几个博客，内容又菜又爱乱写，
+最后还是简单一点比较实在。
+<!--more-->
 
-Hugo is a static site engine written in Go.
+大家好，我是练习时长 10 分钟的前端实习生，这里放个 [10 分钟入门前端的链接](https://gitai.me/2018/12/getting-started-for-js/)
+## 关于个人爱好方面
 
+<br />
 
-It makes use of a variety of open source projects including:
+小学开始就有同学不断的买各种刊报和小说带来学校看，于是我就厚颜无耻的蹭书看。现在还记得小学的《鸡皮疙瘩》，《盗墓笔记》和《鬼吹灯》，印象最深刻就是刊报上的一篇文章...，之后也是各种网络小说什么的，~~阅读习惯要从小养起~~。
+<br />
+顺便安利一下最近看的几本书和作者，纪德的三部曲 + 人间食粮、村上春树、夏目漱石的爱情三部曲等。
 
-* [Cobra](https://github.com/spf13/cobra)
-* [Viper](https://github.com/spf13/viper)
-* [J Walter Weatherman](https://github.com/spf13/jWalterWeatherman)
-* [Cast](https://github.com/spf13/cast)
-
-Learn more and contribute on [GitHub](https://github.com/spf13).
-
-## Setup
-
-Some fun facts about [Hugo](http://gohugo.io/):
-
-* Built in [Go](http://golang.org/)
-* Loosely inspired by [Jekyll](http://jekyllrb.com/)
-* Primarily developed by [spf13](http://spf13.com/) on the train while commuting to and from Manhattan.
-* Coded in [Vim](http://vim.org) using [spf13-vim](http://vim.spf13.com/)
-
-Have questions or suggestions? Feel free to [open an issue on GitHub](https://github.com/spf13/hugo/issues/new) or [ask me on Twitter](https://twitter.com/spf13).
-
-Thanks for reading!
+## 个人书单

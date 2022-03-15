@@ -2,7 +2,7 @@
 
 set -e
 
-hugo
+hugo --theme=hemingway --baseUrl="https://pastSeagull.github.io/blog/"
 
 cd public
 
@@ -12,6 +12,5 @@ git add .
 
 git commit -m 'deploy'
 
-git push origin master:master
-
-git push -f https://${access_token}git@github.com/pastSeagull/blog.git master:gh-pages
+# git push -f https://git@github.com/pastSeagull/blog.git master:gh-pages
+git push -f git@github.com:pastSeagull/blog.git master:gh-pages
