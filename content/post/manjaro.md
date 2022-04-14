@@ -32,7 +32,7 @@ archlinuxcn/arm-linux-gnueabihf-glibc 2.31-1
     usr/arm-linux-gnueabihf/lib/libc.so.6
 
 $:  pamac upgrade
-// 然后开始跟新，我不知道是不是我第一次更新炸了还是啥
+// 然后开始更新，我不知道是不是我第一次更新炸了还是啥
 
 然后又报了个签名错误
 修改 /etc/pacman.config
