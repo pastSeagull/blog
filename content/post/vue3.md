@@ -1,11 +1,10 @@
 ---
 title: "Vue3"
 date: 2022-04-14T09:58:41+08:00
-draft: true
 ---
 
 关于Vue3的一些笔记啥的。
-
+<!--more-->
 ## 一些区别
 先来看看`main.js & app.vue`写法上有什么区别吧。
 `main.js`
@@ -58,7 +57,7 @@ createApp(App).use(router).use(store).mount('#app')
 可以这样写`setup(){}`其中`context`里面包括了`this.$attrs, this.$slots, this.$emit`。
 也可以这样写`setup(props, { attrs, slots, emit }){}`
 简单的栗子
-```vue
+```js
 <script>
 export default {
   name: 'HelloWorld',
@@ -88,7 +87,7 @@ export default {
 ref
 
 > 接受一个参数值并返回一个响应式且可改变的 ref 对象。ref 对象拥有一个指向内部值的单一属性 .value。
-```vue
+```js
 <script>
 import { ref } from 'vue'
 export default {
@@ -126,7 +125,7 @@ setup() {
 - reactive
 
 reactive是使用`Props`来实现的，所以只能传入对象作为参数
-```vue
+```js
 <div v-for="items in userList.item" :key="items.age">{{items.name}}, {{items.age}}</div>
 <script>
     setup() {
@@ -190,7 +189,7 @@ const result = computed(()=> {
 接下来看看`watch`
 可以监听一个或者多个，如果监听多个的话返回的就是数组
 这个回调有三个参数，监听值，`new & old`数据，还有`{ deep: true }`
-```vue
+```js
 <template>
   <button @click="count++">{{count}}</button>
   <button @click="age++">{{age}}</button>
@@ -305,7 +304,7 @@ stop()
 > 当虚拟 DOM 重新渲染为 triggered.Similarly 为renderTracked，接收 debugger event 作为参数。
 > 此事件告诉你是什么操作触发了重新渲染，以及该操作的目标对象和键。
 这时候我们改一下上面的栗子
-```vue
+```js
 <template>
   <button @click="info.name += '1'">{{info.name}}</button>
   <button @click="info.age++">{{info.age}}</button>
@@ -343,14 +342,39 @@ export default {
 }
 </script>
 ```
-这时候控制台是这样的
-```
-renderTracked
-renderTracked
-renderTracked
-renderTracked
-2renderTracked
-```
-总共执行了6次
+这时候控制台是这样的, 总共执行了6次
+![avatar](https://raw.githubusercontent.com/pastSeagull/blog/main/img/onRenderTracked.png)
+
 这时候我们点击更改`name & age`，都没有执行。当更改`catColor`的时候这个生命周期触发了。
-然后我们把`catColor`注释掉刷新，运行了两次。所以说这个`catColor`总共重新渲染了四次？
+所以说这个`catColor`总共重新渲染了四次？
+
+还有这个`renderTriggered`和上面那个应该算是一对把。
+> 当虚拟 DOM 重新渲染为 triggered.Similarly 为renderTracked，接收 debugger event 作为参数。
+> 此事件告诉你是什么操作触发了重新渲染，以及该操作的目标对象和键。
+
+在上面的栗子添加代码
+```js
+onRenderTriggered(({ key, target, type }) => {
+  console.log('---------onRenderTriggered', { key, target, type })
+})
+```
+这时候我们改变`name & age`都会触发这个生命周期。当我们改变`catColot`时，两个都触发了。
+这两个新增的生命周期应该懂了吧。
+最后在`setup(){}`里，生命周期是这样写的
+- beforeCreate===>Not needed*
+- created=======>Not needed*
+- beforeMount ===>onBeforeMount
+- mounted=======>onMounted
+- beforeUpdate===>onBeforeUpdate
+- updated =======>onUpdated
+- beforeUnmount ==>onBeforeUnmount
+- unmounted =====>onUnmounted
+
+当然还更新了很多，具体还是看看官方文档吧。
+
+## 参考
+___
+1. [vue3保姆级教程](https://juejin.cn/post/7030992475271495711#heading-31)
+2. [浅谈Vue3的watchEffect用途](https://segmentfault.com/a/1190000023669309)
+3. [Vue 3 生命周期完整指南](https://juejin.cn/post/6945606524987244558#heading-17)
+4. [Vue3生命周期详解](https://juejin.cn/post/7020017329815683085)

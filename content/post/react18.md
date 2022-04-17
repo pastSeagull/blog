@@ -1,10 +1,10 @@
 ---
 title: "React18"
 date: 2022-04-01T22:47:02+08:00
-draft: true
 ---
 
-关于react18的一些学习
+关于react18的一些笔记啥的
+<!--more-->
 
 https://github.com/facebook/react/blob/main/CHANGELOG.md
 
@@ -114,3 +114,5 @@ export const Test = () => {
     </div>
 }
 ```
+
+待续...
