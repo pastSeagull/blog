@@ -20,7 +20,7 @@ draft: true
 之后结果就成功或者失败。
 
 数据的请求中，我们一般会有这几种状态，`idle`,`loading`,`error`,`success`。
-```js
+```ts
 interface State<T> {
     error: Error | null,
     data: T | null,
