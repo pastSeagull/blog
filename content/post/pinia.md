@@ -1,7 +1,7 @@
 ---
 title: "Pinia"
 date: 2022-08-12T10:25:52+08:00
-draft: true
+draft: false
 ---
 
 pinia一些笔记。
@@ -25,18 +25,22 @@ export const catStore = defineStore("cat", {
 })
 
 // 使用
-// 直接使用ES6解构能得到值 但是不会响应式，用storeToRefs
+// 直接使用ES6解构能得到值 但是丢失响应式，用storeToRefs
 const cat = catStore()
 const { color, age } = storeToRefs(cat)
+
 // 改变store
 cat.age++
+
 // 改变多条
 catStore.$patch({
     age: cat.age + 1,
     weight: cat.weight + 10
 })
+
 // 重置状态
 cat.$reset()
+
 // 新增新对象？中文文档上说是设置新对象来替换store状态
 // You cannot exactly replace the state of a store as that would break reactivity. 
 // You can however patch it:
@@ -109,3 +113,16 @@ store.getUser()
 - 更改甚至取消操作
 - 实现本地存储等副作用
 - 仅适用于特定 Store
+
+`pinia.use()`添加插件
+
+为所有的`Store`添加静态属性
+```js
+function SecretPiniaPlugin() {
+    return { secret: 'the cake is a lie' }
+}
+const pinia = createPinia()
+pinia.use(SecretPiniaPlugin)
+```
+
+待续...

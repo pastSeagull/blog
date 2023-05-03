@@ -84,8 +84,43 @@ export const Basic: React.FC<{ children: ReactNode }> = ({ children } ) => {
     </div>
 }
 ```
-然后就是在`react`版本在16.8后推荐使用`VFC`，就是`VoidFunctionComponent`
+但是React18移除FC的隐式的children，我看很多篇博客都说不要推荐使用了
+
+使用VFC
+> `type React.VFC<P = {}> = React.VoidFunctionComponent<P>`
+> 
+>  @deprecated — - Equivalent with React.FC.
+
+```js
+type FC<P = {}> = FunctionComponent<P>;
+
+interface FunctionComponent<P = {}> {
+    (props: P, context?: any): ReactElement<any, any> | null;
+    propTypes?: WeakValidationMap<P> | undefined;
+    contextTypes?: ValidationMap<any> | undefined;
+    defaultProps?: Partial<P> | undefined;
+    displayName?: string | undefined;
+}
+
+/**
+ * @deprecated - Equivalent with `React.FC`.
+ */
+type VFC<P = {}> = VoidFunctionComponent<P>;
+
+/**
+ * @deprecated - Equivalent with `React.FunctionComponent`.
+ */
+interface VoidFunctionComponent<P = {}> {
+    (props: P, context?: any): ReactElement<any, any> | null;
+    propTypes?: WeakValidationMap<P> | undefined;
+    contextTypes?: ValidationMap<any> | undefined;
+    defaultProps?: Partial<P> | undefined;
+    displayName?: string | undefined;
+}
+```
 https://www.mydatahack.com/using-react-vfc-instead-of-react-fc/
+
+https://fettblog.eu/typescript-react-why-i-dont-use-react-fc/
 
 ## hooks
 - as
