@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>旋钮 | Gaviota</title>
+<link rel="stylesheet" href="https://pastSeagull.github.io/blog//css/style.css">
+
+
+
+<link href="https://cdn.bootcss.com/highlight.js/9.12.0/styles/monokai.min.css" rel="stylesheet">
+
+
+
+
+
+<section class="section">
+  <div class="container">
+    <nav class="nav">
+      <div class="nav-left">
+        <a class="nav-item" href="https://pastSeagull.github.io/blog/"><h1 class="title is-4">Gaviota</h1></a>
+      </div>
+      <div class="nav-right">
+        <nav class="nav-item level is-mobile">
+          
+          <a class="level-item" href="https://github.com/pastSeagull">
+            <span class="icon">
+              <i class="fa fa-github"></i>
+            </span>
+          </a>
+          
+          <a class="level-item" href="https://twitter.com/pastSeagull">
+            <span class="icon">
+              <i class="fa fa-twitter"></i>
+            </span>
+          </a>
+          
+          <a class="level-item" href="/index.xml">
+            <span class="icon">
+              <i class="fa fa-rss"></i>
+            </span>
+          </a>
+          
+        </nav>
+      </div>
+    </nav>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <h2 class="subtitle is-6">October 1, 2025</h2>
+    <h1 class="title">旋钮</h1>
+    <div class="content">
+      <p>一个圆形，底部有触点 &amp; 电容屏的一个业务场景</p>
+<p>就一个硬件和电容屏的交互业务需求，这里就记录一下开发的过程和遇到的坑点和问题。</p>
+<p>大概就是如下图的一个硬件装置。实际上就是一个圆形的东西，底部放着三个触点，每个旋钮底部的触点位置都不太相同（等腰三角形，全等三角形等等）角度都不太一样。
+这里就先叫这玩意为旋钮。</p>
+<p><img src="https://raw.githubusercontent.com/pastSeagull/blog/main/img/yuan.png" alt="旋钮"></p>
+<p>需求大概就是
+1、区分出放上电容屏的是那个旋钮。
+2、旋钮的移动，移动到某块区域
+3、旋钮的旋转</p>
+<p>因为touch事件的数据都是共用的，所以我们需要绑定<code>identifier</code>
+根据上面的需求我们可以列出几个旋钮的数据</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"> <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">deviceList</span> <span style="color:#f92672">=</span> [
+    {
+        <span style="color:#a6e22e">angles</span><span style="color:#f92672">:</span> [<span style="color:#ae81ff">77.10</span>, <span style="color:#ae81ff">34.66</span>, <span style="color:#ae81ff">68.03</span>], <span style="color:#75715e">// 三个触点的角度
+</span><span style="color:#75715e"></span>        <span style="color:#a6e22e">angleTolerance</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">10</span>,  <span style="color:#75715e">// 允许的角度误差
+</span><span style="color:#75715e"></span>        <span style="color:#a6e22e">name</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;绿色&#34;</span>,         <span style="color:#75715e">// 旋钮顶部的颜色 属于是给个标识名称
+</span><span style="color:#75715e"></span>        <span style="color:#a6e22e">touchIds</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">Set</span>(), <span style="color:#75715e">// 绑定触点id
+</span><span style="color:#75715e"></span>        <span style="color:#a6e22e">color</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;#00ff0080&#39;</span>,  <span style="color:#75715e">// 旋钮顶部的颜色
+</span><span style="color:#75715e"></span>        <span style="color:#a6e22e">lastValidPositions</span><span style="color:#f92672">:</span> [],  <span style="color:#75715e">// 触点在移动 旋转的过程中可能会丢失触点
+</span><span style="color:#75715e"></span>        <span style="color:#a6e22e">rotation</span><span style="color:#f92672">:</span> { <span style="color:#a6e22e">baseAngle</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">null</span>, <span style="color:#a6e22e">total</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">0</span>, <span style="color:#a6e22e">delta</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">0</span>, <span style="color:#a6e22e">direction</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;&#39;</span> } <span style="color:#75715e">// 旋转的参数
+</span><span style="color:#75715e"></span>    },
+    {
+        <span style="color:#a6e22e">angles</span><span style="color:#f92672">:</span> [<span style="color:#ae81ff">60</span>, <span style="color:#ae81ff">60</span>, <span style="color:#ae81ff">60</span>],
+        <span style="color:#a6e22e">angleTolerance</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">10</span>,
+        <span style="color:#a6e22e">name</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;蓝色&#34;</span>,
+        <span style="color:#a6e22e">touchIds</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">Set</span>(),
+        <span style="color:#a6e22e">color</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;#0000ff80&#39;</span>,
+        <span style="color:#a6e22e">lastValidPositions</span><span style="color:#f92672">:</span> [],
+        <span style="color:#a6e22e">rotation</span><span style="color:#f92672">:</span> { <span style="color:#a6e22e">baseAngle</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">null</span>, <span style="color:#a6e22e">total</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">0</span>, <span style="color:#a6e22e">delta</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">0</span>, <span style="color:#a6e22e">direction</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;&#39;</span> }
+    },
+    {
+        <span style="color:#a6e22e">angles</span><span style="color:#f92672">:</span> [<span style="color:#ae81ff">90</span>, <span style="color:#ae81ff">45</span>, <span style="color:#ae81ff">45</span>],
+        <span style="color:#a6e22e">angleTolerance</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">10</span>,
+        <span style="color:#a6e22e">name</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;橙色&#34;</span>,
+        <span style="color:#a6e22e">touchIds</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">Set</span>(),
+        <span style="color:#a6e22e">color</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;#ffa50080&#39;</span>,
+        <span style="color:#a6e22e">lastValidPositions</span><span style="color:#f92672">:</span> [],
+        <span style="color:#a6e22e">rotation</span><span style="color:#f92672">:</span> { <span style="color:#a6e22e">baseAngle</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">null</span>, <span style="color:#a6e22e">total</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">0</span>, <span style="color:#a6e22e">delta</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">0</span>, <span style="color:#a6e22e">direction</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;&#39;</span> }
+    }
+];
+</code></pre></div><h2 id="识别旋钮">识别旋钮</h2>
+<p>首先是第一点，识别旋钮
+因为每个旋钮底下的触点角度都不一样，可以根据角度来识别放上去的是那个旋钮
+获取触点的位置计算出三个内角的角度是否符合旋钮触点的角度 比如说橙色的这个等边三角形 <code>angles: [90, 45, 45]</code>
+分为<code>角度A</code>，<code>角度B</code>，<code>角度C</code>，然后<code>排列组合</code>来判断当前放入的是那个旋钮，代码大概如下
+当然严谨点还可以计算边长是否对应上了，这里就不列举出来了。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">isDeviceMatch</span>(<span style="color:#a6e22e">points</span>, <span style="color:#a6e22e">device</span>) {
+    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">angles</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">calculateAngles</span>(<span style="color:#a6e22e">points</span>).<span style="color:#a6e22e">sort</span>((<span style="color:#a6e22e">a</span>, <span style="color:#a6e22e">b</span>) =&gt; <span style="color:#a6e22e">a</span> <span style="color:#f92672">-</span> <span style="color:#a6e22e">b</span>);
+    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">deviceAngles</span> <span style="color:#f92672">=</span> [...<span style="color:#a6e22e">device</span>.<span style="color:#a6e22e">angles</span>].<span style="color:#a6e22e">sort</span>((<span style="color:#a6e22e">a</span>, <span style="color:#a6e22e">b</span>) =&gt; <span style="color:#a6e22e">a</span> <span style="color:#f92672">-</span> <span style="color:#a6e22e">b</span>);
+    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">deviceAngles</span>.<span style="color:#a6e22e">every</span>((<span style="color:#a6e22e">a</span>, <span style="color:#a6e22e">i</span>) =&gt; Math.<span style="color:#a6e22e">abs</span>(<span style="color:#a6e22e">a</span> <span style="color:#f92672">-</span> <span style="color:#a6e22e">angles</span>[<span style="color:#a6e22e">i</span>]) <span style="color:#f92672">&lt;=</span> <span style="color:#a6e22e">device</span>.<span style="color:#a6e22e">angleTolerance</span>);
+}
+<span style="color:#66d9ef">function</span> <span style="color:#a6e22e">calculateAngles</span>(<span style="color:#a6e22e">points</span>) {
+    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">vecAB</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">sub</span>(<span style="color:#a6e22e">points</span>[<span style="color:#ae81ff">1</span>], <span style="color:#a6e22e">points</span>[<span style="color:#ae81ff">0</span>]);
+    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">vecAC</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">sub</span>(<span style="color:#a6e22e">points</span>[<span style="color:#ae81ff">2</span>], <span style="color:#a6e22e">points</span>[<span style="color:#ae81ff">0</span>]);
+    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">vecBC</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">sub</span>(<span style="color:#a6e22e">points</span>[<span style="color:#ae81ff">2</span>], <span style="color:#a6e22e">points</span>[<span style="color:#ae81ff">1</span>]);
+    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">angleA</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">getAngle</span>(<span style="color:#a6e22e">vecAB</span>, <span style="color:#a6e22e">vecAC</span>);
+    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">angleB</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">getAngle</span>(<span style="color:#a6e22e">neg</span>(<span style="color:#a6e22e">vecAB</span>), <span style="color:#a6e22e">vecBC</span>);
+    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">angleC</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">180</span> <span style="color:#f92672">-</span> <span style="color:#a6e22e">angleA</span> <span style="color:#f92672">-</span> <span style="color:#a6e22e">angleB</span>;
+    <span style="color:#66d9ef">return</span> [<span style="color:#a6e22e">angleA</span>, <span style="color:#a6e22e">angleB</span>, <span style="color:#a6e22e">angleC</span>];
+}
+</code></pre></div><p>这时候就拿到了当前放置的是那个旋钮。</p>
+<h2 id="旋钮的移动移动到某块区域">旋钮的移动，移动到某块区域</h2>
+<p>这里就获取三个触点的中心位置，和区域的位置，判断是否移入区域位置，大概代码如下</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#75715e">// 获取 area1，area2，area3 div的区域数据放入dropAreas
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">dropAreas</span> <span style="color:#f92672">=</span> [];
+<span style="color:#66d9ef">function</span> <span style="color:#a6e22e">initArea</span>() {
+    <span style="color:#a6e22e">dropAreas</span> <span style="color:#f92672">=</span> [<span style="color:#e6db74">&#39;area1&#39;</span>, <span style="color:#e6db74">&#39;area2&#39;</span>, <span style="color:#e6db74">&#39;area3&#39;</span>].<span style="color:#a6e22e">map</span>((<span style="color:#a6e22e">id</span>, <span style="color:#a6e22e">index</span>) =&gt; {
+        <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">element</span> <span style="color:#f92672">=</span> document.<span style="color:#a6e22e">getElementById</span>(<span style="color:#a6e22e">id</span>);
+        <span style="color:#66d9ef">if</span> (<span style="color:#f92672">!</span><span style="color:#a6e22e">element</span>) <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">null</span>;
+        <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">rect</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">element</span>.<span style="color:#a6e22e">getBoundingClientRect</span>();
+        <span style="color:#66d9ef">return</span> { <span style="color:#a6e22e">id</span>, <span style="color:#a6e22e">index</span>, <span style="color:#a6e22e">left</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">rect</span>.<span style="color:#a6e22e">left</span>, <span style="color:#a6e22e">right</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">rect</span>.<span style="color:#a6e22e">right</span>, <span style="color:#a6e22e">top</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">rect</span>.<span style="color:#a6e22e">top</span>, <span style="color:#a6e22e">bottom</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">rect</span>.<span style="color:#a6e22e">bottom</span> };
+    }).<span style="color:#a6e22e">filter</span>(Boolean);
+}
+<span style="color:#75715e">// 检测拖拽的 x y 位置移入到那块div内
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">checkOverDropAreasOptimized</span> <span style="color:#f92672">=</span> (<span style="color:#a6e22e">x</span>, <span style="color:#a6e22e">y</span>, <span style="color:#a6e22e">dropAreas</span>) =&gt; {
+    <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">const</span> <span style="color:#a6e22e">area</span> <span style="color:#66d9ef">of</span> <span style="color:#a6e22e">dropAreas</span>) {
+        <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">x</span> <span style="color:#f92672">&gt;=</span> <span style="color:#a6e22e">area</span>.<span style="color:#a6e22e">left</span> <span style="color:#f92672">&amp;&amp;</span> <span style="color:#a6e22e">x</span> <span style="color:#f92672">&lt;=</span> <span style="color:#a6e22e">area</span>.<span style="color:#a6e22e">right</span> <span style="color:#f92672">&amp;&amp;</span> <span style="color:#a6e22e">y</span> <span style="color:#f92672">&gt;=</span> <span style="color:#a6e22e">area</span>.<span style="color:#a6e22e">top</span> <span style="color:#f92672">&amp;&amp;</span> <span style="color:#a6e22e">y</span> <span style="color:#f92672">&lt;=</span> <span style="color:#a6e22e">area</span>.<span style="color:#a6e22e">bottom</span>) {
+            <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">area</span>.<span style="color:#a6e22e">id</span>;
+        }
+    }
+    <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">null</span>;
+};
+</code></pre></div><h2 id="旋钮的旋转">旋钮的旋转</h2>
+<p>判断旋钮顺时针 逆时针旋转。可以添加个阈值，可能细微的移动会触发这个。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#75715e">// 旋转检测功能
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">detectRotations</span>() {
+    <span style="color:#a6e22e">deviceList</span>.<span style="color:#a6e22e">forEach</span>(<span style="color:#a6e22e">device</span> =&gt; {
+        <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">device</span>.<span style="color:#a6e22e">touchIds</span>.<span style="color:#a6e22e">size</span> <span style="color:#f92672">!==</span> <span style="color:#ae81ff">3</span>) <span style="color:#66d9ef">return</span>;
+
+        <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">points</span> <span style="color:#f92672">=</span> Array.<span style="color:#a6e22e">from</span>(<span style="color:#a6e22e">device</span>.<span style="color:#a6e22e">touchIds</span>)
+            .<span style="color:#a6e22e">map</span>(<span style="color:#a6e22e">id</span> =&gt; <span style="color:#a6e22e">currentTouches</span>.<span style="color:#a6e22e">get</span>(<span style="color:#a6e22e">id</span>))
+            .<span style="color:#a6e22e">filter</span>(Boolean);
+
+        <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">points</span>.<span style="color:#a6e22e">length</span> <span style="color:#f92672">===</span> <span style="color:#ae81ff">3</span>) {
+            <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">currentAngle</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">calculateBaseAngle</span>(<span style="color:#a6e22e">points</span>);
+            <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">device</span>.<span style="color:#a6e22e">rotation</span>.<span style="color:#a6e22e">baseAngle</span> <span style="color:#f92672">===</span> <span style="color:#66d9ef">null</span>) {
+                <span style="color:#a6e22e">device</span>.<span style="color:#a6e22e">rotation</span>.<span style="color:#a6e22e">baseAngle</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">currentAngle</span>;
+                <span style="color:#66d9ef">return</span>;
+            }
+
+            <span style="color:#66d9ef">let</span> <span style="color:#a6e22e">delta</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">currentAngle</span> <span style="color:#f92672">-</span> <span style="color:#a6e22e">device</span>.<span style="color:#a6e22e">rotation</span>.<span style="color:#a6e22e">baseAngle</span>;
+            <span style="color:#a6e22e">delta</span> <span style="color:#f92672">=</span> ((<span style="color:#a6e22e">delta</span> <span style="color:#f92672">+</span> <span style="color:#ae81ff">180</span>) <span style="color:#f92672">%</span> <span style="color:#ae81ff">360</span>) <span style="color:#f92672">-</span> <span style="color:#ae81ff">180</span>;
+
+            <span style="color:#a6e22e">device</span>.<span style="color:#a6e22e">rotation</span>.<span style="color:#a6e22e">delta</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">delta</span>;
+            <span style="color:#a6e22e">device</span>.<span style="color:#a6e22e">rotation</span>.<span style="color:#a6e22e">total</span> <span style="color:#f92672">+=</span> <span style="color:#a6e22e">delta</span>;
+            <span style="color:#a6e22e">device</span>.<span style="color:#a6e22e">rotation</span>.<span style="color:#a6e22e">direction</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">delta</span> <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">1</span> <span style="color:#f92672">?</span> <span style="color:#e6db74">&#39;顺时针&#39;</span> <span style="color:#f92672">:</span> <span style="color:#a6e22e">delta</span> <span style="color:#f92672">&lt;</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span> <span style="color:#f92672">?</span> <span style="color:#e6db74">&#39;逆时针&#39;</span> <span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;&#39;</span>;
+            <span style="color:#a6e22e">device</span>.<span style="color:#a6e22e">rotation</span>.<span style="color:#a6e22e">baseAngle</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">currentAngle</span>;
+        }
+    });
+}
+
+<span style="color:#66d9ef">function</span> <span style="color:#a6e22e">calculateBaseAngle</span>(<span style="color:#a6e22e">points</span>) {
+    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">vec</span> <span style="color:#f92672">=</span> { <span style="color:#a6e22e">x</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">points</span>[<span style="color:#ae81ff">1</span>].<span style="color:#a6e22e">x</span> <span style="color:#f92672">-</span> <span style="color:#a6e22e">points</span>[<span style="color:#ae81ff">0</span>].<span style="color:#a6e22e">x</span>, <span style="color:#a6e22e">y</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">points</span>[<span style="color:#ae81ff">1</span>].<span style="color:#a6e22e">y</span> <span style="color:#f92672">-</span> <span style="color:#a6e22e">points</span>[<span style="color:#ae81ff">0</span>].<span style="color:#a6e22e">y</span> };
+    <span style="color:#66d9ef">return</span> Math.<span style="color:#a6e22e">atan2</span>(<span style="color:#a6e22e">vec</span>.<span style="color:#a6e22e">y</span>, <span style="color:#a6e22e">vec</span>.<span style="color:#a6e22e">x</span>) <span style="color:#f92672">*</span> <span style="color:#ae81ff">180</span> <span style="color:#f92672">/</span> Math.<span style="color:#a6e22e">PI</span>;
+}
+</code></pre></div><h2 id="一些问题和坑">一些问题和坑</h2>
+<p>按钮的<code>click</code>事件只能使用<code>touchstart</code>来替换了。
+业务上本来有个图片拖拽，双指放大缩小的功能的。本来是是用了<code>gsap</code>的<code>Draggable</code>，还有<code>Hammerjs</code>来判断双指放大缩小的。但是把这个旋钮放上去之后就都失效了。
+这里就简单的写了一个拖拽+双指放大缩小的功能。</p>
+<p>大概思路就是绑定<code>identifier</code>，根据 <code>identifier</code> 在<code>touchmove</code>回调中过滤出来<code>x y</code>的数据。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-vue" data-lang="vue">&lt;<span style="color:#f92672">template</span>&gt;
+  &lt;<span style="color:#f92672">div</span>
+      <span style="color:#a6e22e">ref</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;draggableElement&#34;</span>
+      <span style="color:#f92672">:</span><span style="color:#a6e22e">style</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;{
+</span><span style="color:#e6db74">      transform: translateVal,
+</span><span style="color:#e6db74">      touchAction: &#39;none&#39;,
+</span><span style="color:#e6db74">      position: &#39;fixed&#39;
+</span><span style="color:#e6db74">    }&#34;</span>
+      <span style="color:#a6e22e">class</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;drag-box&#34;</span>
+      <span style="color:#f92672">@touchstart</span><span style="color:#e6db74">=&#34;handleStart&#34;</span>
+      <span style="color:#f92672">@touchmove</span><span style="color:#e6db74">=&#34;handleMove&#34;</span>
+      <span style="color:#f92672">@touchend</span><span style="color:#e6db74">=&#34;handleEnd&#34;</span>
+  &gt;
+    &lt;<span style="color:#f92672">slot</span>&gt;&lt;/<span style="color:#f92672">slot</span>&gt;
+  &lt;/<span style="color:#f92672">div</span>&gt;
+&lt;/<span style="color:#f92672">template</span>&gt;
+</code></pre></div><p>使用变量<code>count</code>来区分放上去的是单指还是双指。在<code>touchstart</code>来绑定<code>identifier</code>，<code>touchmove</code>来进行业务操作。最后<code>touchend</code>清空绑定的<code>identifier</code>和<code>count--</code>
+单指的就获取x y来修改位置，双指就判断两个坐标的位置变化来放大和缩小。
+最后代码大概如下。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">count</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
+
+<span style="color:#75715e">// 单指
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">activeTouches</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">ref</span>(<span style="color:#66d9ef">new</span> <span style="color:#a6e22e">Map</span>())
+<span style="color:#75715e">// 双指
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">scaleIdentifier</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">ref</span>(<span style="color:#66d9ef">new</span> <span style="color:#a6e22e">Map</span>())
+
+<span style="color:#66d9ef">const</span> <span style="color:#a6e22e">handleStart</span> <span style="color:#f92672">=</span> (<span style="color:#a6e22e">event</span>) =&gt; {
+    <span style="color:#a6e22e">count</span><span style="color:#f92672">++</span>
+    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">touches</span> <span style="color:#f92672">=</span> Array.<span style="color:#a6e22e">from</span>(<span style="color:#a6e22e">event</span>.<span style="color:#a6e22e">touches</span>)
+    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">lastTouch</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">touches</span>[<span style="color:#a6e22e">touches</span>.<span style="color:#a6e22e">length</span> <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>];    <span style="color:#75715e">// 最后一个触摸点
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">prevLastTouch</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">touches</span>[<span style="color:#a6e22e">touches</span>.<span style="color:#a6e22e">length</span> <span style="color:#f92672">-</span> <span style="color:#ae81ff">2</span>]; <span style="color:#75715e">// 倒数第二个触摸点
+</span><span style="color:#75715e"></span>
+    <span style="color:#a6e22e">scaleIdentifier</span>.<span style="color:#a6e22e">value</span>.<span style="color:#a6e22e">clear</span>();
+    <span style="color:#a6e22e">scaleIdentifier</span>.<span style="color:#a6e22e">value</span>.<span style="color:#a6e22e">set</span>(<span style="color:#a6e22e">lastTouch</span>.<span style="color:#a6e22e">identifier</span>, {})
+    <span style="color:#a6e22e">scaleIdentifier</span>.<span style="color:#a6e22e">value</span>.<span style="color:#a6e22e">set</span>(<span style="color:#a6e22e">prevLastTouch</span>.<span style="color:#a6e22e">identifier</span>, {})
+
+    <span style="color:#a6e22e">activeTouches</span>.<span style="color:#a6e22e">value</span>.<span style="color:#a6e22e">clear</span>()
+    <span style="color:#a6e22e">activeTouches</span>.<span style="color:#a6e22e">value</span>.<span style="color:#a6e22e">set</span>(<span style="color:#a6e22e">lastTouch</span>.<span style="color:#a6e22e">identifier</span>, {})
+}
+<span style="color:#66d9ef">const</span> <span style="color:#a6e22e">handleMove</span> <span style="color:#f92672">=</span> (<span style="color:#a6e22e">event</span>) =&gt; {
+    <span style="color:#66d9ef">if</span>(<span style="color:#a6e22e">count</span> <span style="color:#f92672">===</span> <span style="color:#ae81ff">1</span>) {
+        <span style="color:#75715e">// ...
+</span><span style="color:#75715e"></span>    } <span style="color:#66d9ef">else</span> {
+        <span style="color:#75715e">// ...
+</span><span style="color:#75715e"></span>    }
+}
+
+<span style="color:#66d9ef">const</span> <span style="color:#a6e22e">handleEnd</span> <span style="color:#f92672">=</span> (<span style="color:#a6e22e">event</span>) =&gt; {
+    <span style="color:#a6e22e">count</span><span style="color:#f92672">--</span>
+    <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">const</span> <span style="color:#a6e22e">touch</span> <span style="color:#66d9ef">of</span> <span style="color:#a6e22e">event</span>.<span style="color:#a6e22e">changedTouches</span>) {
+        <span style="color:#a6e22e">activeTouches</span>.<span style="color:#a6e22e">value</span>.<span style="color:#66d9ef">delete</span>(<span style="color:#a6e22e">touch</span>.<span style="color:#a6e22e">identifier</span>)
+        <span style="color:#a6e22e">scaleIdentifier</span>.<span style="color:#a6e22e">value</span>.<span style="color:#66d9ef">delete</span>(<span style="color:#a6e22e">touch</span>.<span style="color:#a6e22e">identifier</span>)
+    }
+}
+</code></pre></div><p>到这里就差不多把这个业务需求给做出来了，
+属于是在Ai的帮助下，缝缝补补的把功能给做了出来。</p>
+<p>完整的旋钮测试的代码地址：https://github.com/pastSeagull/Learn-demo/blob/main/blog/knobs.html</p>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container has-text-centered">
+    <p>&copy; <a href="https://github.com/pastSeagull">Gaviota</a> 2016</p>
+  </div>
+</section>
+
+
+
+
+
+
+
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+
+
+
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+
+

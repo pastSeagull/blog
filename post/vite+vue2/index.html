@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vite&#43;vue2 | Gaviota</title>
+<link rel="stylesheet" href="https://pastSeagull.github.io/blog//css/style.css">
+
+
+
+<link href="https://cdn.bootcss.com/highlight.js/9.12.0/styles/monokai.min.css" rel="stylesheet">
+
+
+
+
+
+<section class="section">
+  <div class="container">
+    <nav class="nav">
+      <div class="nav-left">
+        <a class="nav-item" href="https://pastSeagull.github.io/blog/"><h1 class="title is-4">Gaviota</h1></a>
+      </div>
+      <div class="nav-right">
+        <nav class="nav-item level is-mobile">
+          
+          <a class="level-item" href="https://github.com/pastSeagull">
+            <span class="icon">
+              <i class="fa fa-github"></i>
+            </span>
+          </a>
+          
+          <a class="level-item" href="https://twitter.com/pastSeagull">
+            <span class="icon">
+              <i class="fa fa-twitter"></i>
+            </span>
+          </a>
+          
+          <a class="level-item" href="/index.xml">
+            <span class="icon">
+              <i class="fa fa-rss"></i>
+            </span>
+          </a>
+          
+        </nav>
+      </div>
+    </nav>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <h2 class="subtitle is-6">May 3, 2023</h2>
+    <h1 class="title">Vite&#43;vue2</h1>
+    <div class="content">
+      <p>不要问我为什么用上vite还在vue2</p>
+<h1 id="关于vitevue2的一些坑和配置">关于vite+vue2的一些坑和配置</h1>
+<h2 id="vue2--vitejsplugin-vue2">vue2 &amp; @vitejs/plugin-vue2</h2>
+<p>初始化项目<code>pnpm create vite</code>，选择<code>Vanilla</code>，<code>JavaScript</code></p>
+<p><img src="https://raw.githubusercontent.com/pastSeagull/blog/main/img/vite-vue2.png" alt="avatar"></p>
+<p>这里安装<code>vue</code>和<code>@vitejs/plugin-vue2</code>，安装<code>vue</code>的时候要指定版本，不然就装<code>vue3</code>了</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#e6db74">&#34;@vitejs/plugin-vue2&#34;</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;^2.2.0&#34;</span>,
+<span style="color:#e6db74">&#34;vue&#34;</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;^2.7.0&#34;</span>
+</code></pre></div><p>新建<code>src</code>文件，在<code>src</code>下新建<code>App.vue</code>,<code>main.js</code>
+main.js修改为</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#66d9ef">import</span> <span style="color:#a6e22e">Vue</span> <span style="color:#a6e22e">from</span> <span style="color:#e6db74">&#34;vue&#34;</span>;
+<span style="color:#66d9ef">import</span> <span style="color:#a6e22e">App</span> <span style="color:#a6e22e">from</span> <span style="color:#e6db74">&#34;./App.vue&#34;</span>
+
+<span style="color:#66d9ef">new</span> <span style="color:#a6e22e">Vue</span>({
+    <span style="color:#a6e22e">el</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;#app&#34;</span>,
+    <span style="color:#a6e22e">render</span><span style="color:#f92672">:</span> (<span style="color:#a6e22e">h</span>) =&gt; <span style="color:#a6e22e">h</span>(<span style="color:#a6e22e">App</span>)
+}).<span style="color:#a6e22e">$mount</span>();
+
+</code></pre></div><p>根目录下新建<code>vite.config.js</code></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#66d9ef">import</span> <span style="color:#a6e22e">createVuePlugin</span> <span style="color:#a6e22e">from</span> <span style="color:#e6db74">&#39;@vitejs/plugin-vue2&#39;</span>
+
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">default</span> {
+  <span style="color:#a6e22e">plugins</span><span style="color:#f92672">:</span> [<span style="color:#a6e22e">createVuePlugin</span>()]
+}
+</code></pre></div><p>根目录下的index.html</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-html" data-lang="html">&lt;<span style="color:#f92672">script</span> <span style="color:#a6e22e">type</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;module&#34;</span> <span style="color:#a6e22e">src</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;/main.js&#34;</span>&gt;&lt;/<span style="color:#f92672">script</span>&gt;
+<span style="color:#75715e">&lt;!--改为--&gt;</span>
+&lt;<span style="color:#f92672">script</span> <span style="color:#a6e22e">type</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;module&#34;</span> <span style="color:#a6e22e">src</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;/src/main.js&#34;</span>&gt;&lt;/<span style="color:#f92672">script</span>&gt;
+</code></pre></div><p>删掉<code>counter.js</code> <code>javascript.svg</code> <code>style.css</code></p>
+<p><img src="https://raw.githubusercontent.com/pastSeagull/blog/main/img/vite-vue2-first.png" alt="avatar"></p>
+<p>这时候<code>pnpm run dev</code>就可以看到效果了</p>
+<h2 id="element-ui--legacy">element-ui &amp; legacy</h2>
+<p>安装<code>element-ui</code> <code>@vitejs/plugin-legacy</code> <code>unplugin-vue-components</code></p>
+<p>按需引入<code>element-ui</code>需要安装<code>unplugin-vue-components</code></p>
+<p>main.js导入css<code>import 'element-ui/lib/theme-chalk/index.css';</code></p>
+<p>vite.config.js改成这样</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#66d9ef">import</span> <span style="color:#a6e22e">createVuePlugin</span> <span style="color:#a6e22e">from</span> <span style="color:#e6db74">&#39;@vitejs/plugin-vue2&#39;</span>
+<span style="color:#66d9ef">import</span> <span style="color:#a6e22e">Components</span> <span style="color:#a6e22e">from</span> <span style="color:#e6db74">&#39;unplugin-vue-components/vite&#39;</span>
+<span style="color:#66d9ef">import</span> { <span style="color:#a6e22e">ElementUiResolver</span> } <span style="color:#a6e22e">from</span> <span style="color:#e6db74">&#39;unplugin-vue-components/resolvers&#39;</span>
+<span style="color:#66d9ef">import</span> <span style="color:#a6e22e">legacy</span> <span style="color:#a6e22e">from</span> <span style="color:#e6db74">&#39;@vitejs/plugin-legacy&#39;</span>
+
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">default</span> {
+    <span style="color:#a6e22e">plugins</span><span style="color:#f92672">:</span> [
+        <span style="color:#a6e22e">createVuePlugin</span>(),
+        <span style="color:#a6e22e">Components</span>({
+            <span style="color:#a6e22e">resolvers</span><span style="color:#f92672">:</span> [<span style="color:#a6e22e">ElementUiResolver</span>()],
+        }),
+        <span style="color:#a6e22e">legacy</span>({
+            <span style="color:#a6e22e">targets</span><span style="color:#f92672">:</span> [<span style="color:#e6db74">&#39;defaults&#39;</span>, <span style="color:#e6db74">&#39;not ie &lt; 9&#39;</span>],
+        }),
+    ],
+    <span style="color:#a6e22e">build</span><span style="color:#f92672">:</span> {
+        <span style="color:#a6e22e">rollupOptions</span><span style="color:#f92672">:</span> {
+            <span style="color:#a6e22e">output</span><span style="color:#f92672">:</span> {
+                <span style="color:#a6e22e">manualChunks</span><span style="color:#f92672">:</span> {
+                    <span style="color:#e6db74">&#39;element-ui&#39;</span><span style="color:#f92672">:</span> [<span style="color:#e6db74">&#39;element-ui&#39;</span>],
+                },
+            },
+        },
+    },
+}
+</code></pre></div><h2 id="坑--一些配置">坑 &amp; 一些配置</h2>
+<h3 id="坑">坑</h3>
+<p>说一下我遇到的坑
+刚开始用的是<code>vite-plugin-vue2</code>这时候用element-ui部分组件无法使用显示
+比如说<code>table</code>组件根本显示不出来，找到个issues解决了，把<code>vite-plugin-vue2</code>换成<code>@vitejs/plugin-vue2</code>
+<a href="https://github.com/ElemeFE/element/issues/21968">https://github.com/ElemeFE/element/issues/21968</a></p>
+<h3 id="配置">配置</h3>
+<p>下面的一些配置就看个人喜好了，当然vue2.7也支持写<code>Composition API</code>，
+本来我的vue版本是2.5的，因为某些业务原因。现在也是2.5，只是这篇博客换上了2.7。</p>
+<p>这里要说的是2版本有些写法，比如说<code>this.$message</code> <code>this.$confirm</code> <code>v-loading</code>这些
+可以在main.js中配置</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#66d9ef">import</span> { <span style="color:#a6e22e">Message</span>, <span style="color:#a6e22e">MessageBox</span>, <span style="color:#a6e22e">Loading</span> } <span style="color:#a6e22e">from</span> <span style="color:#e6db74">&#34;element-ui&#34;</span>;
+
+<span style="color:#a6e22e">Vue</span>.<span style="color:#a6e22e">use</span>(<span style="color:#a6e22e">Loading</span>.<span style="color:#a6e22e">directive</span>)
+<span style="color:#a6e22e">Vue</span>.<span style="color:#a6e22e">use</span>({
+    <span style="color:#a6e22e">install</span> (<span style="color:#a6e22e">Vue</span>) {
+        <span style="color:#a6e22e">Vue</span>.<span style="color:#a6e22e">Message</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">Message</span>
+        <span style="color:#a6e22e">Vue</span>.<span style="color:#a6e22e">MessageBox</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">MessageBox</span>
+        <span style="color:#a6e22e">Vue</span>.<span style="color:#a6e22e">prototype</span>.<span style="color:#a6e22e">$message</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">Message</span>
+        <span style="color:#a6e22e">Vue</span>.<span style="color:#a6e22e">prototype</span>.<span style="color:#a6e22e">$confirm</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">MessageBox</span>
+    }
+})
+</code></pre></div><p>当然还有一些<code>router</code> <code>axios</code>这些就自行添加了</p>
+<p>最后不要在问我为什么用vite还在用vue2，用vue2.7还不用<code>Composition API</code>
+要是现在自己从头开始的项目我还是推荐什么都拉到最新的了，当然你要是需要兼容低版本的浏览器另外说。
+这个项目本意是是都拉到最新的，当我用vue3写完之后我觉得没必要那么麻烦。因为这个是相当于从2迁移到3了。
+这个项目只是作为另一个项目的一个小部分，一边改了 这边也得改，所以还是我太懒了，为了以后好维护<del>好ctrl c v</del></p>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container has-text-centered">
+    <p>&copy; <a href="https://github.com/pastSeagull">Gaviota</a> 2016</p>
+  </div>
+</section>
+
+
+
+
+
+
+
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+
+
+
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+
+

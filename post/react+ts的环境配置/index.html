@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>React&#43;ts的环境配置 | Gaviota</title>
+<link rel="stylesheet" href="https://pastSeagull.github.io/blog//css/style.css">
+
+
+
+<link href="https://cdn.bootcss.com/highlight.js/9.12.0/styles/monokai.min.css" rel="stylesheet">
+
+
+
+
+
+<section class="section">
+  <div class="container">
+    <nav class="nav">
+      <div class="nav-left">
+        <a class="nav-item" href="https://pastSeagull.github.io/blog/"><h1 class="title is-4">Gaviota</h1></a>
+      </div>
+      <div class="nav-right">
+        <nav class="nav-item level is-mobile">
+          
+          <a class="level-item" href="https://github.com/pastSeagull">
+            <span class="icon">
+              <i class="fa fa-github"></i>
+            </span>
+          </a>
+          
+          <a class="level-item" href="https://twitter.com/pastSeagull">
+            <span class="icon">
+              <i class="fa fa-twitter"></i>
+            </span>
+          </a>
+          
+          <a class="level-item" href="/index.xml">
+            <span class="icon">
+              <i class="fa fa-rss"></i>
+            </span>
+          </a>
+          
+        </nav>
+      </div>
+    </nav>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <h2 class="subtitle is-6">January 1, 0001</h2>
+    <h1 class="title">React&#43;ts的环境配置</h1>
+    <div class="content">
+      <p>一次React+ts的项目配置</p>
+<p><code>yarn add react react-dom -S</code>
+但是要用 babel-loader 对文件进行进行处理，webpack 识别不了 jsx 语法
+<code>yarn add babel-loader @babel/core @babel/preset-react -D</code>
+根目录创建<code>.babelrc</code>文件</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js">{
+  <span style="color:#e6db74">&#34;presets&#34;</span><span style="color:#f92672">:</span> [<span style="color:#e6db74">&#34;@babel/preset-react&#34;</span>]
+}
+</code></pre></div><p>在 webpack 配置文件加上</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#a6e22e">rules</span><span style="color:#f92672">:</span> [
+  {
+    <span style="color:#a6e22e">test</span><span style="color:#f92672">:</span> <span style="color:#e6db74">/\.(tsx?|js)$/</span>,
+    <span style="color:#a6e22e">loader</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;babel-loader&#34;</span>,
+    <span style="color:#a6e22e">options</span><span style="color:#f92672">:</span> { <span style="color:#a6e22e">cacheDirectory</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">true</span> },
+    <span style="color:#a6e22e">exclude</span><span style="color:#f92672">:</span> <span style="color:#e6db74">/node_modules/</span>,
+  },
+];
+</code></pre></div><h1 id="ts">ts</h1>
+<p>使用 <code>@babel/preset-typescript</code> 来对 ts 的支持 <code>yarn add @babel/preset-typescript -D</code>
+然后修改<code>.babelrc</code>，把<code>@babel/preset-typescript</code> 添加上去</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#75715e">// presets的执行顺序是从后到前的
+</span><span style="color:#75715e"></span>{
+  <span style="color:#e6db74">&#34;presets&#34;</span><span style="color:#f92672">:</span> [<span style="color:#e6db74">&#34;@babel/preset-react&#34;</span>, <span style="color:#e6db74">&#34;@babel/preset-typescript&#34;</span>]
+}
+</code></pre></div><p>这时候修改 webpack 配置文件</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#75715e">// 添加
+</span><span style="color:#75715e"></span><span style="color:#a6e22e">resolve</span><span style="color:#f92672">:</span> {
+    <span style="color:#a6e22e">extensions</span><span style="color:#f92672">:</span> [<span style="color:#e6db74">&#39;.tsx&#39;</span>, <span style="color:#e6db74">&#39;.ts&#39;</span>, <span style="color:#e6db74">&#39;.js&#39;</span>, <span style="color:#e6db74">&#39;.json&#39;</span>],
+  },
+</code></pre></div><p>这时候 start 就可以看到结果了。</p>
+<p>添加 React 类型声明<code>yarn add @types/react @types/react-dom -D</code></p>
+<p>使用<code>npx tsc --init</code>来生成<code>tsconfig.json</code>文件</p>
+<ul>
+<li>编译指定的文件</li>
+<li>定义的编译的类型</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js">{
+  <span style="color:#e6db74">&#34;compilerOptions&#34;</span><span style="color:#f92672">:</span> {
+    <span style="color:#75715e">// 基本配置
+</span><span style="color:#75715e"></span>    <span style="color:#e6db74">&#34;target&#34;</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;ES5&#34;</span>,                          <span style="color:#75715e">// 编译成哪个版本的 es
+</span><span style="color:#75715e"></span>    <span style="color:#e6db74">&#34;module&#34;</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;ESNext&#34;</span>,                       <span style="color:#75715e">// 指定生成哪个模块系统代码
+</span><span style="color:#75715e"></span>    <span style="color:#e6db74">&#34;lib&#34;</span><span style="color:#f92672">:</span> [<span style="color:#e6db74">&#34;dom&#34;</span>, <span style="color:#e6db74">&#34;dom.iterable&#34;</span>, <span style="color:#e6db74">&#34;esnext&#34;</span>], <span style="color:#75715e">// 编译过程中需要引入的库文件的列表
+</span><span style="color:#75715e"></span>    <span style="color:#e6db74">&#34;allowJs&#34;</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">true</span>,                          <span style="color:#75715e">// 允许编译 js 文件
+</span><span style="color:#75715e"></span>    <span style="color:#e6db74">&#34;jsx&#34;</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;react&#34;</span>,                           <span style="color:#75715e">// 在 .tsx 文件里支持 JSX
+</span><span style="color:#75715e"></span>    <span style="color:#e6db74">&#34;isolatedModules&#34;</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">true</span>,
+    <span style="color:#e6db74">&#34;strict&#34;</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">true</span>,                           <span style="color:#75715e">// 启用所有严格类型检查选项
+</span><span style="color:#75715e"></span>
+    <span style="color:#75715e">// 模块解析选项
+</span><span style="color:#75715e"></span>    <span style="color:#e6db74">&#34;moduleResolution&#34;</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;node&#34;</span>,               <span style="color:#75715e">// 指定模块解析策略
+</span><span style="color:#75715e"></span>    <span style="color:#e6db74">&#34;esModuleInterop&#34;</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">true</span>,                  <span style="color:#75715e">// 支持 CommonJS 和 ES 模块之间的互操作性
+</span><span style="color:#75715e"></span>    <span style="color:#e6db74">&#34;resolveJsonModule&#34;</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">true</span>,                <span style="color:#75715e">// 支持导入 json 模块
+</span><span style="color:#75715e"></span>    <span style="color:#e6db74">&#34;baseUrl&#34;</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;./&#34;</span>,                          <span style="color:#75715e">// 根路径
+</span><span style="color:#75715e"></span>    <span style="color:#e6db74">&#34;paths&#34;</span><span style="color:#f92672">:</span> {																<span style="color:#75715e">// 路径映射，与 baseUrl 关联
+</span><span style="color:#75715e"></span>      <span style="color:#e6db74">&#34;Src/*&#34;</span><span style="color:#f92672">:</span> [<span style="color:#e6db74">&#34;src/*&#34;</span>],
+      <span style="color:#e6db74">&#34;Components/*&#34;</span><span style="color:#f92672">:</span> [<span style="color:#e6db74">&#34;src/components/*&#34;</span>],
+      <span style="color:#e6db74">&#34;Utils/*&#34;</span><span style="color:#f92672">:</span> [<span style="color:#e6db74">&#34;src/utils/*&#34;</span>]
+    },
+
+    <span style="color:#75715e">// 实验性选项
+</span><span style="color:#75715e"></span>    <span style="color:#e6db74">&#34;experimentalDecorators&#34;</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">true</span>,           <span style="color:#75715e">// 启用实验性的ES装饰器
+</span><span style="color:#75715e"></span>    <span style="color:#e6db74">&#34;emitDecoratorMetadata&#34;</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">true</span>,            <span style="color:#75715e">// 给源码里的装饰器声明加上设计类型元数据
+</span><span style="color:#75715e"></span>
+    <span style="color:#75715e">// 其他选项
+</span><span style="color:#75715e"></span>    <span style="color:#e6db74">&#34;forceConsistentCasingInFileNames&#34;</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">true</span>, <span style="color:#75715e">// 禁止对同一个文件的不一致的引用
+</span><span style="color:#75715e"></span>    <span style="color:#e6db74">&#34;skipLibCheck&#34;</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">true</span>,                     <span style="color:#75715e">// 忽略所有的声明文件（ *.d.ts）的类型检查
+</span><span style="color:#75715e"></span>    <span style="color:#e6db74">&#34;allowSyntheticDefaultImports&#34;</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">true</span>,     <span style="color:#75715e">// 允许从没有设置默认导出的模块中默认导入
+</span><span style="color:#75715e"></span>    <span style="color:#e6db74">&#34;noEmit&#34;</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">true</span>														<span style="color:#75715e">// 只想使用tsc的类型检查作为函数时（当其他工具（例如Babel实际编译）时）使用它
+</span><span style="color:#75715e"></span>  },
+  <span style="color:#e6db74">&#34;exclude&#34;</span><span style="color:#f92672">:</span> [<span style="color:#e6db74">&#34;node_modules&#34;</span>]
+}
+</code></pre></div><h1 id="文件层级">文件层级</h1>
+<p>如果文件的层级过于深可以使用<code>eslint-import-resolver-typescript</code> <code>yarn add eslint-import-resolver-typescript</code>
+然后修改<code>.eslintrc.js</code>文件和 webpack 配置中的 resolve.alias 添加映射规则</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#a6e22e">settings</span><span style="color:#f92672">:</span> {
+  <span style="color:#e6db74">&#39;import/resolver&#39;</span><span style="color:#f92672">:</span> {
+    <span style="color:#a6e22e">node</span><span style="color:#f92672">:</span> {
+      <span style="color:#a6e22e">extensions</span><span style="color:#f92672">:</span> [<span style="color:#e6db74">&#39;.tsx&#39;</span>, <span style="color:#e6db74">&#39;.ts&#39;</span>, <span style="color:#e6db74">&#39;.js&#39;</span>, <span style="color:#e6db74">&#39;.json&#39;</span>],
+    },
+    <span style="color:#a6e22e">typescript</span><span style="color:#f92672">:</span> {},
+  },
+},
+
+<span style="color:#75715e">// webpack
+</span><span style="color:#75715e"></span><span style="color:#a6e22e">resolve</span><span style="color:#f92672">:</span> {
+<span style="color:#a6e22e">alias</span><span style="color:#f92672">:</span> {
+      <span style="color:#a6e22e">Src</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">resolve</span>(<span style="color:#a6e22e">PROJECT_PATH</span>, <span style="color:#e6db74">&#39;./src&#39;</span>),
+      <span style="color:#a6e22e">Components</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">resolve</span>(<span style="color:#a6e22e">PROJECT_PATH</span>, <span style="color:#e6db74">&#39;./src/components&#39;</span>),
+      <span style="color:#a6e22e">Utils</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">resolve</span>(<span style="color:#a6e22e">PROJECT_PATH</span>, <span style="color:#e6db74">&#39;./src/utils&#39;</span>),
+    },
+}
+</code></pre></div><ul>
+<li>这里，如果你新添加了路径的话，你要去<code>tsconfig.json</code>里面<code>paths</code>添加新路径</li>
+</ul>
+<h1 id="babelplugin-transform-runtime">@babel/plugin-transform-runtime</h1>
+<p>如果使用到了 Promise 或者.includes 这些新特性，这些是没有办法转成 ES5 语法的，这时候需要把新特性的注入到打包后的文件中
+<code>yarn add @babel/preset-env @babel/plugin-transform-runtime -D</code>
+<code>yarn add @babel/runtime-corejs3 -S</code>
+修改<code>.babelrc</code>文件</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js">{
+  <span style="color:#e6db74">&#34;presets&#34;</span><span style="color:#f92672">:</span> [
+    [
+      <span style="color:#e6db74">&#34;@babel/preset-env&#34;</span>,
+      {
+        <span style="color:#75715e">// 防止babel将任何模块类型都转译成CommonJS类型，导致tree-shaking失效问题
+</span><span style="color:#75715e"></span>        <span style="color:#e6db74">&#34;modules&#34;</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">false</span>
+      }
+    ],
+    <span style="color:#e6db74">&#34;@babel/preset-react&#34;</span>,
+    <span style="color:#e6db74">&#34;@babel/preset-typescript&#34;</span>
+  ],
+  <span style="color:#e6db74">&#34;plungins&#34;</span><span style="color:#f92672">:</span> [
+    [
+      <span style="color:#e6db74">&#34;@babel/plugin-transform-runtime&#34;</span>,
+      {
+        <span style="color:#e6db74">&#34;corejs&#34;</span><span style="color:#f92672">:</span> {
+          <span style="color:#e6db74">&#34;version&#34;</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">3</span>,
+          <span style="color:#e6db74">&#34;proposals&#34;</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">true</span>
+        },
+        <span style="color:#e6db74">&#34;useESModules&#34;</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">true</span>
+      }
+    ]
+  ]
+}
+</code></pre></div><p>然后就出现了版本问题&hellip;查了好久换了几个版本还是出错</p>
+<h1 id="公共环境优化">公共环境优化</h1>
+<p>打包公共静态资源，用<code>copy-webpack-plugin</code> <code>yarn add copy-webpack-plugin -D</code>
+修改 webpack 配置</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">CopyPlugin</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">require</span>(<span style="color:#e6db74">&#34;copy-webpack-plugin&#34;</span>);
+
+<span style="color:#a6e22e">plugins</span><span style="color:#f92672">:</span> [
+  <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">CopyPlugin</span>({
+    <span style="color:#a6e22e">patterns</span><span style="color:#f92672">:</span> [
+      {
+        <span style="color:#a6e22e">context</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">resolve</span>(<span style="color:#a6e22e">PROJECT_PATH</span>, <span style="color:#e6db74">&#34;./public&#34;</span>),
+        <span style="color:#a6e22e">from</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;*&#34;</span>,
+        <span style="color:#a6e22e">to</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">resolve</span>(<span style="color:#a6e22e">PROJECT_PATH</span>, <span style="color:#e6db74">&#34;./dist&#34;</span>),
+        <span style="color:#a6e22e">toType</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;dir&#34;</span>,
+      },
+    ],
+  }),
+];
+</code></pre></div><blockquote>
+<p>特别需要注意一定要设置<code>cache: false</code> 不然你代码修改后刷新页面，HTML 不会引入任何打包出来的 JS 文件</p>
+</blockquote>
+<h1 id="显示编译进度">显示编译进度</h1>
+<p>怀疑在偷懒，还增加了回车键的使用量，<code>webpackbar</code> <code>yarn add webpackbar -D</code>
+在 webpack 中添加</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">WebpackBar</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">require</span>(<span style="color:#e6db74">&#34;webpackbar&#34;</span>);
+
+<span style="color:#a6e22e">plugins</span><span style="color:#f92672">:</span> [
+  <span style="color:#75715e">// 其它 plugin...
+</span><span style="color:#75715e"></span>  <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">WebpackBar</span>({
+    <span style="color:#a6e22e">name</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">isDev</span> <span style="color:#f92672">?</span> <span style="color:#e6db74">&#34;正在启动&#34;</span> <span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;正在打包&#34;</span>,
+    <span style="color:#a6e22e">color</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;#fa8c16&#34;</span>,
+  }),
+];
+</code></pre></div><h1 id="编译时-ts-的类型检查">编译时 ts 的类型检查</h1>
+<p>编辑器中已经红色下划线了，但是还是能编译的，这就变成了 any ts 了<code>fork-ts-checker-webpack-plugin</code>来提示错误
+打包或者编译的时候提示错误，安装<code>yarn add fork-ts-checker-webpack-plugin -D</code>
+在 webpack 中添加</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">ForkTsCheckerWebpackPlugin</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">require</span>(<span style="color:#e6db74">&#34;fork-ts-checker-webpack-plugin&#34;</span>);
+
+<span style="color:#a6e22e">plugins</span><span style="color:#f92672">:</span> [
+  <span style="color:#75715e">// 其它 plugin...
+</span><span style="color:#75715e"></span>  <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">ForkTsCheckerWebpackPlugin</span>({
+    <span style="color:#a6e22e">typescript</span><span style="color:#f92672">:</span> {
+      <span style="color:#a6e22e">configFile</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">resolve</span>(<span style="color:#a6e22e">PROJECT_PATH</span>, <span style="color:#e6db74">&#34;./tsconfig.json&#34;</span>),
+    },
+  }),
+];
+</code></pre></div><h1 id="二次编译速度">二次编译速度</h1>
+<p><code>hard-source-webpack-plugin</code> 加快二次编译速度，<code>yarn add hard-source-webpack-plugin</code></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">HardSourceWebpackPlugin</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">require</span>(<span style="color:#e6db74">&#34;hard-source-webpack-plugin&#34;</span>);
+
+<span style="color:#a6e22e">plugins</span><span style="color:#f92672">:</span> [
+  <span style="color:#75715e">// 其它 plugin...
+</span><span style="color:#75715e"></span>  <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">HardSourceWebpackPlugin</span>(),
+];
+</code></pre></div><h1 id="external-减少打包体积">external 减少打包体积</h1>
+<p>引入的第三方包太多了，打包的文件就会越来越大，每次进入页面的时候很可能就会出现白屏。使用 CDN 链接的形式把包剥离出去。
+webpack 配置</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#a6e22e">plugins</span><span style="color:#f92672">:</span> [
+    <span style="color:#75715e">// 其它 plugin...
+</span><span style="color:#75715e"></span>  ],
+  <span style="color:#a6e22e">externals</span><span style="color:#f92672">:</span> {
+    <span style="color:#a6e22e">react</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;React&#39;</span>,
+    <span style="color:#e6db74">&#39;react-dom&#39;</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;ReactDOM&#39;</span>,
+  },
+</code></pre></div><p>在 index.html 中添加链接</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-html" data-lang="html">&lt;<span style="color:#f92672">script</span>
+  <span style="color:#a6e22e">crossorigin</span>
+  <span style="color:#a6e22e">src</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;https://unpkg.com/react@16.13.1/umd/react.production.min.js&#34;</span>
+&gt;&lt;/<span style="color:#f92672">script</span>&gt;
+&lt;<span style="color:#f92672">script</span>
+  <span style="color:#a6e22e">crossorigin</span>
+  <span style="color:#a6e22e">src</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;https://unpkg.com/react-dom@16.13.1/umd/react-dom.production.min.js&#34;</span>
+&gt;&lt;/<span style="color:#f92672">script</span>&gt;
+</code></pre></div><p>优势</p>
+<blockquote>
+<p>http 缓存，浏览器的缓存策略，之后进入页面不需要重新下载<code>react</code>和<code>react-dom</code>
+还有就是 webpack 的编译时间减少了</p>
+</blockquote>
+<p>但是如果别人使用你的项目，就要下载对应的版本包了，因为依赖没有打进最后输入的包了面</p>
+<h1 id="抽离公共代码">抽离公共代码</h1>
+<p>懒加载，把第三方依赖打出来独立的 chunk，webpack4 默认开启这个功能
+但是第三方包也打出来就要在 webpack 中配置</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#a6e22e">module</span>.<span style="color:#a6e22e">exports</span> <span style="color:#f92672">=</span> {
+	<span style="color:#75715e">// other...
+</span><span style="color:#75715e"></span>  <span style="color:#a6e22e">externals</span><span style="color:#f92672">:</span> {<span style="color:#75715e">//...},
+</span><span style="color:#75715e"></span>  <span style="color:#a6e22e">optimization</span><span style="color:#f92672">:</span> {
+    <span style="color:#a6e22e">splitChunks</span><span style="color:#f92672">:</span> {
+      <span style="color:#a6e22e">chunks</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;all&#39;</span>,
+      <span style="color:#a6e22e">name</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">true</span>,
+    },
+  },
+}
+</code></pre></div><h1 id="热更新">热更新</h1>
+<p>大一点的项目每次修改一点代码那打包时间。
+新增<code>webpack.HotModuleReplacementPlugin</code>插件</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">webpack</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">require</span>(<span style="color:#e6db74">&#39;webpack&#39;</span>)
+
+<span style="color:#a6e22e">module</span>.<span style="color:#a6e22e">exports</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">merge</span>(<span style="color:#a6e22e">common</span>, {
+  <span style="color:#a6e22e">devServer</span><span style="color:#f92672">:</span> {<span style="color:#75715e">//...},
+</span><span style="color:#75715e"></span>  <span style="color:#a6e22e">plugins</span><span style="color:#f92672">:</span> [
+    <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">webpack</span>.<span style="color:#a6e22e">HotModuleReplacementPlugin</span>(),
+  ]
+})
+</code></pre></div><p>ts 会报错，需要安装<code>yarn add @types/webpack-env -D</code></p>
+<h1 id="跨域">跨域</h1>
+<p>建一个文件写入接口信息</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">proxySettings</span> <span style="color:#f92672">=</span> {
+  <span style="color:#75715e">// 接口代理1
+</span><span style="color:#75715e"></span>  <span style="color:#e6db74">&#34;/api/&#34;</span><span style="color:#f92672">:</span> {
+    <span style="color:#a6e22e">target</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;http://198.168.111.111:3001&#34;</span>,
+    <span style="color:#a6e22e">changeOrigin</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">true</span>,
+  },
+  <span style="color:#75715e">// 接口代理2
+</span><span style="color:#75715e"></span>  <span style="color:#e6db74">&#34;/api-2/&#34;</span><span style="color:#f92672">:</span> {
+    <span style="color:#a6e22e">target</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;http://198.168.111.111:3002&#34;</span>,
+    <span style="color:#a6e22e">changeOrigin</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">true</span>,
+    <span style="color:#a6e22e">pathRewrite</span><span style="color:#f92672">:</span> {
+      <span style="color:#e6db74">&#34;^/api-2&#34;</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;&#34;</span>,
+    },
+  },
+  <span style="color:#75715e">// .....
+</span><span style="color:#75715e"></span>};
+
+<span style="color:#a6e22e">module</span>.<span style="color:#a6e22e">exports</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">proxySettings</span>;
+
+<span style="color:#75715e">// 然后在webpack dev中；引入
+</span><span style="color:#75715e"></span><span style="color:#a6e22e">module</span>.<span style="color:#a6e22e">exports</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">merge</span>(<span style="color:#a6e22e">common</span>, {
+  <span style="color:#a6e22e">devServer</span><span style="color:#f92672">:</span> {
+    <span style="color:#75715e">//...
+</span><span style="color:#75715e"></span>    <span style="color:#a6e22e">proxy</span><span style="color:#f92672">:</span> { ...<span style="color:#a6e22e">proxySetting</span> },
+  },
+});
+</code></pre></div><h1 id="css-样式抽离">css 样式抽离</h1>
+<p>上面抽离公共代码把 css 样式都打包今年了 js 文件，这样文件就会越来越大
+借助<code>mini-css-extract-plugin</code>来抽离 css <code>yarn add mini-css-extract-plugin -D</code></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#75715e">// 在webpack中修改
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">MiniCssExtractPlugin</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">require</span>(<span style="color:#e6db74">&#34;mini-css-extract-plugin&#34;</span>);
+
+<span style="color:#66d9ef">const</span> <span style="color:#a6e22e">getCssLoaders</span> <span style="color:#f92672">=</span> (<span style="color:#a6e22e">importLoaders</span>) =&gt; [
+  <span style="color:#a6e22e">isDev</span> <span style="color:#f92672">?</span> <span style="color:#e6db74">&#34;style-loader&#34;</span> <span style="color:#f92672">:</span> <span style="color:#a6e22e">MiniCssExtractPlugin</span>.<span style="color:#a6e22e">loader</span>,
+  <span style="color:#75715e">// ....
+</span><span style="color:#75715e"></span>];
+
+<span style="color:#a6e22e">plugins</span><span style="color:#f92672">:</span> [
+  <span style="color:#75715e">// 其它 plugin...
+</span><span style="color:#75715e"></span>  <span style="color:#f92672">!</span><span style="color:#a6e22e">isDev</span> <span style="color:#f92672">&amp;&amp;</span>
+    <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">MiniCssExtractPlugin</span>({
+      <span style="color:#a6e22e">filename</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;css/[name].[contenthash:8].css&#34;</span>,
+      <span style="color:#a6e22e">chunkFilename</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;css/[name].[contenthash:8].css&#34;</span>,
+      <span style="color:#a6e22e">ignoreOrder</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">false</span>,
+    }),
+];
+</code></pre></div><h1 id="去除无用样式">去除无用样式</h1>
+<p><code>purgecss-webpack-plugin</code> 来去除无用的样式</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#75715e">// webpack prod
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> { <span style="color:#a6e22e">resolve</span> } <span style="color:#f92672">=</span> <span style="color:#a6e22e">require</span>(<span style="color:#e6db74">&#34;path&#34;</span>);
+<span style="color:#66d9ef">const</span> <span style="color:#a6e22e">glob</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">require</span>(<span style="color:#e6db74">&#34;glob&#34;</span>);
+<span style="color:#66d9ef">const</span> <span style="color:#a6e22e">PurgeCSSPlugin</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">require</span>(<span style="color:#e6db74">&#34;purgecss-webpack-plugin&#34;</span>);
+<span style="color:#66d9ef">const</span> { <span style="color:#a6e22e">PROJECT_PATH</span> } <span style="color:#f92672">=</span> <span style="color:#a6e22e">require</span>(<span style="color:#e6db74">&#34;../constants&#34;</span>);
+
+<span style="color:#a6e22e">plugins</span><span style="color:#f92672">:</span> [
+    <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">PurgeCSSPlugin</span>({
+      <span style="color:#a6e22e">paths</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">glob</span>.<span style="color:#a6e22e">sync</span>(<span style="color:#e6db74">`</span><span style="color:#e6db74">${</span><span style="color:#a6e22e">resolve</span>(<span style="color:#a6e22e">PROJECT_PATH</span>, <span style="color:#e6db74">&#39;./src&#39;</span>)<span style="color:#e6db74">}</span><span style="color:#e6db74">/**/*.{tsx,scss,less,css}`</span>, { <span style="color:#a6e22e">nodir</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">true</span> }),
+    }),
+  ],
+</code></pre></div><h1 id="压缩-js-和-css">压缩 js 和 css</h1>
+<p>webpack4 中的 js 代码压缩 <code>yarn add terser-webpack-plugin -D</code></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#75715e">// webpack 中 optimization
+</span><span style="color:#75715e"></span><span style="color:#a6e22e">module</span>.<span style="color:#a6e22e">exports</span> <span style="color:#f92672">=</span> {
+	<span style="color:#75715e">// other...
+</span><span style="color:#75715e"></span>  <span style="color:#a6e22e">externals</span><span style="color:#f92672">:</span> {<span style="color:#75715e">//...},
+</span><span style="color:#75715e"></span>  <span style="color:#a6e22e">optimization</span><span style="color:#f92672">:</span> {
+    <span style="color:#a6e22e">minimize</span><span style="color:#f92672">:</span> <span style="color:#f92672">!</span><span style="color:#a6e22e">isDev</span>, <span style="color:#75715e">// 默认是true，判断如果是生产环境就开启压缩
+</span><span style="color:#75715e"></span>    <span style="color:#a6e22e">minimizer</span><span style="color:#f92672">:</span> [
+      <span style="color:#f92672">!</span><span style="color:#a6e22e">isDev</span> <span style="color:#f92672">&amp;&amp;</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">TerserPlugin</span>({
+        <span style="color:#a6e22e">extractComments</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">false</span>, <span style="color:#75715e">// 去除所有注解，除了特殊标记注解
+</span><span style="color:#75715e"></span>        <span style="color:#a6e22e">terserOptions</span><span style="color:#f92672">:</span> {
+          <span style="color:#a6e22e">compress</span><span style="color:#f92672">:</span> { <span style="color:#a6e22e">pure_funcs</span><span style="color:#f92672">:</span> [<span style="color:#e6db74">&#39;console.log&#39;</span>] }, <span style="color:#75715e">// 想要去除的函数，这里就去除console.log
+</span><span style="color:#75715e"></span>        }
+      })
+    ].<span style="color:#a6e22e">filter</span>(Boolean),
+    <span style="color:#a6e22e">splitChunks</span><span style="color:#f92672">:</span> {<span style="color:#75715e">//...},
+</span><span style="color:#75715e"></span>  },
+}
+
+<span style="color:#75715e">// css压缩
+</span><span style="color:#75715e"></span><span style="color:#a6e22e">module</span>.<span style="color:#a6e22e">exports</span> <span style="color:#f92672">=</span> {
+  <span style="color:#a6e22e">optimization</span><span style="color:#f92672">:</span> {
+    <span style="color:#a6e22e">minimizer</span><span style="color:#f92672">:</span> [
+      <span style="color:#75715e">// terser
+</span><span style="color:#75715e"></span>      <span style="color:#f92672">!</span><span style="color:#a6e22e">isDev</span> <span style="color:#f92672">&amp;&amp;</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">OptimizeCssAssetsPlugin</span>()
+    ].<span style="color:#a6e22e">filter</span>(Boolean),
+  },
+}
+</code></pre></div><h1 id="tree-shaking">tree-shaking</h1>
+<p>webpack 内置的打包优化，在生产环境下，打包后把<code>import</code>引入未使用的代码去除</p>
+<h1 id="打包分析">打包分析</h1>
+<p>查看打出的包都有那些具体多大<code>yarn add webpack-bundle-analyzer -D</code></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">webpack</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">require</span>(<span style="color:#e6db74">&#34;webpack&#34;</span>);
+
+<span style="color:#a6e22e">module</span>.<span style="color:#a6e22e">exports</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">merge</span>(<span style="color:#a6e22e">common</span>, {
+  <span style="color:#a6e22e">plugins</span><span style="color:#f92672">:</span> [
+    <span style="color:#75715e">// ...
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">BundleAnalyzerPlugin</span>({
+      <span style="color:#a6e22e">analyzerMode</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;server&#34;</span>, <span style="color:#75715e">// 开一个本地服务查看报告
+</span><span style="color:#75715e"></span>      <span style="color:#a6e22e">analyzerHost</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;127.0.0.1&#34;</span>, <span style="color:#75715e">// host 设置
+</span><span style="color:#75715e"></span>      <span style="color:#a6e22e">analyzerPort</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">8888</span>, <span style="color:#75715e">// 端口号设置
+</span><span style="color:#75715e"></span>    }),
+  ],
+});
+</code></pre></div><ul>
+<li>最后在这里记录一个问题
+就是<code>react-touter-dom</code>使用了<code>browserHistory</code>然后跳转页面后刷新页面就没了。然后webpack的解释</li>
+</ul>
+<blockquote>
+<p>When using the HTML5 History API, the index.html page will likely have to be served in place of any
+404 responses. Enable devServer.historyApiFallback by setting it to true:</p>
+</blockquote>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#75715e">// 把historyApiFallback打开就好了
+</span><span style="color:#75715e"></span><span style="color:#a6e22e">devServer</span><span style="color:#f92672">:</span> {
+    <span style="color:#a6e22e">historyApiFallback</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">true</span>,
+  },
+</code></pre></div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container has-text-centered">
+    <p>&copy; <a href="https://github.com/pastSeagull">Gaviota</a> 2016</p>
+  </div>
+</section>
+
+
+
+
+
+
+
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+
+
+
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+
+

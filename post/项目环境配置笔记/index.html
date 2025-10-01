@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>项目环境配置笔记 | Gaviota</title>
+<link rel="stylesheet" href="https://pastSeagull.github.io/blog//css/style.css">
+
+
+
+<link href="https://cdn.bootcss.com/highlight.js/9.12.0/styles/monokai.min.css" rel="stylesheet">
+
+
+
+
+
+<section class="section">
+  <div class="container">
+    <nav class="nav">
+      <div class="nav-left">
+        <a class="nav-item" href="https://pastSeagull.github.io/blog/"><h1 class="title is-4">Gaviota</h1></a>
+      </div>
+      <div class="nav-right">
+        <nav class="nav-item level is-mobile">
+          
+          <a class="level-item" href="https://github.com/pastSeagull">
+            <span class="icon">
+              <i class="fa fa-github"></i>
+            </span>
+          </a>
+          
+          <a class="level-item" href="https://twitter.com/pastSeagull">
+            <span class="icon">
+              <i class="fa fa-twitter"></i>
+            </span>
+          </a>
+          
+          <a class="level-item" href="/index.xml">
+            <span class="icon">
+              <i class="fa fa-rss"></i>
+            </span>
+          </a>
+          
+        </nav>
+      </div>
+    </nav>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <h2 class="subtitle is-6">January 1, 0001</h2>
+    <h1 class="title">项目环境配置笔记</h1>
+    <div class="content">
+      <p>首先这是学习笔记，这篇学习笔记是在学习的过程中的笔记，包括后面的那篇 webpack 笔记也是
+当然不是完全 copy 过来，这个就是自己在学习过程中的笔记。</p>
+<p><a href="https://github.com/vortesnail/blog/issues/14">原博客的链接</a>
+然后就是 <a href="https://github.com/vortesnail/react-ts-quick-starter">完成之后的 GitHub 链接</a>
+之前没看到所以自己在学习的时候出现了很多版本的问题。</p>
+<h1 id="editorconfig">EditorConfig</h1>
+<p>用 EditorConfig 来配置代码格式，vscode 安装插件
+在项目目录下创建<code>.editorconfig</code>文件，看一下官方文档，代码缩进风格，大小格式什么的都可以配置</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#a6e22e">root</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">true</span>
+
+[<span style="color:#f92672">*</span>]
+<span style="color:#a6e22e">indent_style</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">space</span>  <span style="color:#75715e">// 缩进风格，tab or space
+</span><span style="color:#75715e"></span><span style="color:#a6e22e">indent_size</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">2</span>       <span style="color:#75715e">// 缩进大小
+</span><span style="color:#75715e"></span><span style="color:#a6e22e">charset</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">utf</span><span style="color:#f92672">-</span><span style="color:#ae81ff">8</span>       <span style="color:#75715e">// 编码格式
+</span><span style="color:#75715e"></span><span style="color:#a6e22e">trim_trailing_whitespace</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">true</span> <span style="color:#75715e">// 删除多余的空格
+</span><span style="color:#75715e"></span><span style="color:#a6e22e">insert_final_newline</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">true</span>     <span style="color:#75715e">// 在尾部上插上一行
+</span><span style="color:#75715e"></span><span style="color:#a6e22e">end_of_line</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">lf</span>                <span style="color:#75715e">// lf, cr, crlf。操作系统的的换行符不一样。
+</span><span style="color:#75715e"></span>
+[<span style="color:#f92672">*</span>.<span style="color:#a6e22e">md</span>]
+<span style="color:#a6e22e">trim_trailing_whitespace</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">false</span> <span style="color:#75715e">// 关闭markdown的删除多余空格
+</span></code></pre></div><h1 id="prettier">Prettier</h1>
+<p>主要是统一项目风格，一些框架的文档会说明框架是<code>opinionated</code> or <code>unopinionated</code>。</p>
+<p>官网的介绍</p>
+<blockquote>
+<p>An opinionated code formatter<br>
+Supports many languages<br>
+Integrates with most editors<br>
+Has few options<br>
+目录下创建<code>.prettierrc</code>文件，当然要使用 vocode 的插件，<code>prettierrc</code>和<code>editorconfig</code>有一些配置重合了，最好重合的配置都一样。</p>
+</blockquote>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js">{
+  <span style="color:#e6db74">&#34;trailingComma&#34;</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;all&#34;</span>,   <span style="color:#75715e">// 最后一个属性末尾添加, {a: 1, b: 2} change {a: 1, b: 2,}
+</span><span style="color:#75715e"></span>  <span style="color:#e6db74">&#34;tabWidth&#34;</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">2</span>,            <span style="color:#75715e">// 缩进大小
+</span><span style="color:#75715e"></span>  <span style="color:#e6db74">&#34;semi&#34;</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">false</span>,            <span style="color:#75715e">// 是否添加分号
+</span><span style="color:#75715e"></span>  <span style="color:#e6db74">&#34;singleQuote&#34;</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">true</span>,      <span style="color:#75715e">// 是否单引号
+</span><span style="color:#75715e"></span>  <span style="color:#e6db74">&#34;jsxSingleQuote&#34;</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">true</span>,   <span style="color:#75715e">// jsx的是否单引号
+</span><span style="color:#75715e"></span>  <span style="color:#e6db74">&#34;endOfLine&#34;</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;lf&#34;</span>,        <span style="color:#75715e">// lf, cr, crlf。操作系统的的换行符不一样
+</span><span style="color:#75715e"></span>  <span style="color:#e6db74">&#34;printWidth&#34;</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">120</span>,        <span style="color:#75715e">// 单行代码最长度，超过自动换行
+</span><span style="color:#75715e"></span>  <span style="color:#e6db74">&#34;bracketSpacing&#34;</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">true</span>,   <span style="color:#75715e">// 对象括号之家加空格{a: 1} chang { a: 1 }
+</span><span style="color:#75715e"></span>  <span style="color:#e6db74">&#34;arrowParens&#34;</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;always&#34;</span>   <span style="color:#75715e">// 箭头函数无论多少个参数都用括号包裹。 or 设置成 aviod
+</span><span style="color:#75715e"></span>}
+</code></pre></div><p>安装插件后，在根目录建<code>.vscode</code>，里面建<code>settings.json</code>，这个配置会优先于 vscode 的的全局<code>settings.json</code>。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json">{
+  <span style="color:#960050;background-color:#1e0010">//</span> <span style="color:#960050;background-color:#1e0010">指定哪些文件不参与搜索</span>
+  <span style="color:#f92672">&#34;search.exclude&#34;</span>: {
+    <span style="color:#f92672">&#34;**/node_modules&#34;</span>: <span style="color:#66d9ef">true</span>,
+    <span style="color:#f92672">&#34;dist&#34;</span>: <span style="color:#66d9ef">true</span>,
+    <span style="color:#f92672">&#34;yarn.lock&#34;</span>: <span style="color:#66d9ef">true</span>
+  },
+  <span style="color:#f92672">&#34;editor.formatOnSave&#34;</span>: <span style="color:#66d9ef">true</span>,
+  <span style="color:#f92672">&#34;[javascript]&#34;</span>: {
+    <span style="color:#f92672">&#34;editor.defaultFormatter&#34;</span>: <span style="color:#e6db74">&#34;esbenp.prettier-vscode&#34;</span>
+  },
+  <span style="color:#f92672">&#34;[javascriptreact]&#34;</span>: {
+    <span style="color:#f92672">&#34;editor.defaultFormatter&#34;</span>: <span style="color:#e6db74">&#34;esbenp.prettier-vscode&#34;</span>
+  },
+  <span style="color:#f92672">&#34;[typescript]&#34;</span>: {
+    <span style="color:#f92672">&#34;editor.defaultFormatter&#34;</span>: <span style="color:#e6db74">&#34;esbenp.prettier-vscode&#34;</span>
+  },
+  <span style="color:#f92672">&#34;[typescriptreact]&#34;</span>: {
+    <span style="color:#f92672">&#34;editor.defaultFormatter&#34;</span>: <span style="color:#e6db74">&#34;esbenp.prettier-vscode&#34;</span>
+  },
+  <span style="color:#f92672">&#34;[json]&#34;</span>: {
+    <span style="color:#f92672">&#34;editor.defaultFormatter&#34;</span>: <span style="color:#e6db74">&#34;esbenp.prettier-vscode&#34;</span>
+  },
+  <span style="color:#f92672">&#34;[html]&#34;</span>: {
+    <span style="color:#f92672">&#34;editor.defaultFormatter&#34;</span>: <span style="color:#e6db74">&#34;esbenp.prettier-vscode&#34;</span>
+  },
+  <span style="color:#f92672">&#34;[markdown]&#34;</span>: {
+    <span style="color:#f92672">&#34;editor.defaultFormatter&#34;</span>: <span style="color:#e6db74">&#34;esbenp.prettier-vscode&#34;</span>
+  },
+  <span style="color:#f92672">&#34;[css]&#34;</span>: {
+    <span style="color:#f92672">&#34;editor.defaultFormatter&#34;</span>: <span style="color:#e6db74">&#34;esbenp.prettier-vscode&#34;</span>
+  },
+  <span style="color:#f92672">&#34;[less]&#34;</span>: {
+    <span style="color:#f92672">&#34;editor.defaultFormatter&#34;</span>: <span style="color:#e6db74">&#34;esbenp.prettier-vscode&#34;</span>
+  },
+  <span style="color:#f92672">&#34;[scss]&#34;</span>: {
+    <span style="color:#f92672">&#34;editor.defaultFormatter&#34;</span>: <span style="color:#e6db74">&#34;esbenp.prettier-vscode&#34;</span>
+  }
+}
+</code></pre></div><h1 id="eslint">ESLint</h1>
+<p><code>yarn add install eslint -D</code>
+主要是检查代码质量问题<code>eslint --fix</code>还能修复代码写法
+还有各种逼死强迫症的红色下划线，以前写 Vue 自定义指令，忘了啥报错了，不给运行项目，然后就通过 package.json 暂时关闭了这报错</p>
+<p>ESLint 就通过 npm 安装就好了，<code>npx eslint --init</code>初始化的时候你需要啥就 Y。
+安装完了就多出个文件<code>.eslintrc.js</code>,可以自行配置，然后 vscode 也有这个插件自动修复你的代码</p>
+<ul>
+<li>How would you like to use ESLint?
+<blockquote>
+<p>To check syntax, find problems, and enforce code style // 检查语法，检测问题，强制代码风格</p>
+</blockquote>
+</li>
+<li>What type of modules does your project use?
+<blockquote>
+<p>JavaScript modules (import/export) // ES6 的模块导入导出</p>
+</blockquote>
+</li>
+<li>Which framework does your project use?
+<blockquote>
+<p>React</p>
+</blockquote>
+</li>
+<li>Does your project use TypeScript?
+<blockquote>
+<p>ts</p>
+</blockquote>
+</li>
+<li>Which style guide do you want to follow?
+<blockquote>
+<p>Airbnb</p>
+</blockquote>
+</li>
+<li>What format do you want your config file to be in?
+<blockquote>
+<p>js</p>
+</blockquote>
+</li>
+<li>Would you like to install them now with npm?</li>
+</ul>
+<p>多了个文件<code>.eslintrc.js</code></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#a6e22e">module</span>.<span style="color:#a6e22e">exports</span> <span style="color:#f92672">=</span> {
+  <span style="color:#a6e22e">env</span><span style="color:#f92672">:</span> {
+    <span style="color:#a6e22e">browser</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">true</span>,
+    <span style="color:#a6e22e">es2020</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">true</span>,
+    <span style="color:#a6e22e">node</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">true</span>,
+  },
+  <span style="color:#66d9ef">extends</span><span style="color:#f92672">:</span> [
+    <span style="color:#e6db74">&#34;plugin:react/recommended&#34;</span>,
+    <span style="color:#e6db74">&#34;airbnb&#34;</span>,
+    <span style="color:#e6db74">&#34;airbnb/hooks&#34;</span>, <span style="color:#75715e">// React Hooks 的检查，自己添加
+</span><span style="color:#75715e"></span>    <span style="color:#e6db74">&#34;plugin:@typescript-eslint/recommended&#34;</span>, <span style="color:#75715e">// ts，但是要在下面添加rules 不然.ts 和 .tsx 文件中引入另一个文件模块会报错
+</span><span style="color:#75715e"></span>  ],
+  <span style="color:#a6e22e">parser</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;@typescript-eslint/parser&#34;</span>,
+  <span style="color:#a6e22e">parserOptions</span><span style="color:#f92672">:</span> {
+    <span style="color:#a6e22e">ecmaFeatures</span><span style="color:#f92672">:</span> {
+      <span style="color:#a6e22e">jsx</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">true</span>,
+    },
+    <span style="color:#a6e22e">ecmaVersion</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">11</span>,
+    <span style="color:#a6e22e">sourceType</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;module&#34;</span>,
+  },
+  <span style="color:#a6e22e">plugins</span><span style="color:#f92672">:</span> [<span style="color:#e6db74">&#34;react&#34;</span>, <span style="color:#e6db74">&#34;@typescript-eslint&#34;</span>],
+  <span style="color:#75715e">// rules: {}, 添加的rules
+</span><span style="color:#75715e"></span>  <span style="color:#a6e22e">rules</span><span style="color:#f92672">:</span> {
+    <span style="color:#e6db74">&#34;import/extensions&#34;</span><span style="color:#f92672">:</span> [
+      <span style="color:#a6e22e">ERROR</span>,
+      <span style="color:#e6db74">&#34;ignorePackages&#34;</span>,
+      {
+        <span style="color:#a6e22e">ts</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;never&#34;</span>,
+        <span style="color:#a6e22e">tsx</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;never&#34;</span>,
+        <span style="color:#a6e22e">json</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;never&#34;</span>,
+        <span style="color:#a6e22e">js</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;never&#34;</span>,
+      },
+    ],
+  },
+  <span style="color:#75715e">// 添加配置文件
+</span><span style="color:#75715e"></span>  <span style="color:#a6e22e">settings</span><span style="color:#f92672">:</span> {
+    <span style="color:#e6db74">&#34;import/resolver&#34;</span><span style="color:#f92672">:</span> {
+      <span style="color:#a6e22e">node</span><span style="color:#f92672">:</span> {
+        <span style="color:#a6e22e">extensions</span><span style="color:#f92672">:</span> [<span style="color:#e6db74">&#34;.tsx&#34;</span>, <span style="color:#e6db74">&#34;.ts&#34;</span>, <span style="color:#e6db74">&#34;.js&#34;</span>, <span style="color:#e6db74">&#34;.json&#34;</span>],
+      },
+    },
+  },
+};
+</code></pre></div><p>可以在安装两个插件<code>yarn add eslint-plugin-promise eslint-plugin-unicorn -D</code>,添加后的配置</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">OFF</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
+<span style="color:#66d9ef">const</span> <span style="color:#a6e22e">WARN</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>;
+<span style="color:#66d9ef">const</span> <span style="color:#a6e22e">ERROR</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">2</span>;
+
+<span style="color:#a6e22e">module</span>.<span style="color:#a6e22e">exports</span> <span style="color:#f92672">=</span> {
+  <span style="color:#a6e22e">env</span><span style="color:#f92672">:</span> {
+    <span style="color:#a6e22e">browser</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">true</span>,
+    <span style="color:#a6e22e">es2020</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">true</span>,
+    <span style="color:#a6e22e">node</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">true</span>,
+  },
+  <span style="color:#66d9ef">extends</span><span style="color:#f92672">:</span> [
+    <span style="color:#e6db74">&#34;airbnb&#34;</span>,
+    <span style="color:#e6db74">&#34;airbnb/hooks&#34;</span>,
+    <span style="color:#e6db74">&#34;plugin:react/recommended&#34;</span>,
+    <span style="color:#e6db74">&#34;plugin:unicorn/recommended&#34;</span>,
+    <span style="color:#e6db74">&#34;plugin:promise/recommended&#34;</span>,
+    <span style="color:#e6db74">&#34;plugin:@typescript-eslint/recommended&#34;</span>,
+  ],
+  <span style="color:#a6e22e">parser</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;@typescript-eslint/parser&#34;</span>,
+  <span style="color:#a6e22e">parserOptions</span><span style="color:#f92672">:</span> {
+    <span style="color:#a6e22e">ecmaFeatures</span><span style="color:#f92672">:</span> {
+      <span style="color:#a6e22e">jsx</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">true</span>,
+    },
+    <span style="color:#a6e22e">ecmaVersion</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">11</span>,
+    <span style="color:#a6e22e">sourceType</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;module&#34;</span>,
+  },
+  <span style="color:#a6e22e">settings</span><span style="color:#f92672">:</span> {
+    <span style="color:#e6db74">&#34;import/resolver&#34;</span><span style="color:#f92672">:</span> {
+      <span style="color:#a6e22e">node</span><span style="color:#f92672">:</span> {
+        <span style="color:#a6e22e">extensions</span><span style="color:#f92672">:</span> [<span style="color:#e6db74">&#34;.tsx&#34;</span>, <span style="color:#e6db74">&#34;.ts&#34;</span>, <span style="color:#e6db74">&#34;.js&#34;</span>, <span style="color:#e6db74">&#34;.json&#34;</span>],
+      },
+    },
+  },
+  <span style="color:#a6e22e">plugins</span><span style="color:#f92672">:</span> [<span style="color:#e6db74">&#34;react&#34;</span>, <span style="color:#e6db74">&#34;unicorn&#34;</span>, <span style="color:#e6db74">&#34;promise&#34;</span>, <span style="color:#e6db74">&#34;@typescript-eslint&#34;</span>],
+  <span style="color:#a6e22e">rules</span><span style="color:#f92672">:</span> {
+    <span style="color:#e6db74">&#34;import/extensions&#34;</span><span style="color:#f92672">:</span> [
+      <span style="color:#a6e22e">ERROR</span>,
+      <span style="color:#e6db74">&#34;ignorePackages&#34;</span>,
+      {
+        <span style="color:#a6e22e">ts</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;never&#34;</span>,
+        <span style="color:#a6e22e">tsx</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;never&#34;</span>,
+        <span style="color:#a6e22e">json</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;never&#34;</span>,
+        <span style="color:#a6e22e">js</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;never&#34;</span>,
+      },
+    ],
+  },
+};
+</code></pre></div><p>因为安装了<code>@typescript-eslint/eslint-plugin</code>你必须要安装<code>typescrpt</code>。<code>yarn add typescript -D</code>。安装好了之后 ts 文件就有强迫症的下划线了</p>
+<p>最后你在 vscode 在安装插件，在<code>.vscode</code>下的<code>settings.json</code>添加内容,保存的时候就会自动格式化</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json">{
+  <span style="color:#f92672">&#34;eslint.validate&#34;</span>: [
+    <span style="color:#e6db74">&#34;javascript&#34;</span>,
+    <span style="color:#e6db74">&#34;javascriptreact&#34;</span>,
+    <span style="color:#e6db74">&#34;typescript&#34;</span>,
+    <span style="color:#e6db74">&#34;typescriptreact&#34;</span>
+  ],
+  <span style="color:#f92672">&#34;typescript.tsdk&#34;</span>: <span style="color:#e6db74">&#34;./node_modules/typescript/lib&#34;</span>, <span style="color:#960050;background-color:#1e0010">//</span> <span style="color:#960050;background-color:#1e0010">代替</span> <span style="color:#960050;background-color:#1e0010">vscode</span> <span style="color:#960050;background-color:#1e0010">的</span> <span style="color:#960050;background-color:#1e0010">ts</span> <span style="color:#960050;background-color:#1e0010">语法智能提示</span>
+  <span style="color:#f92672">&#34;editor.codeActionsOnSave&#34;</span>: {
+    <span style="color:#f92672">&#34;source.fixAll.eslint&#34;</span>: <span style="color:#66d9ef">true</span>
+  }
+}
+</code></pre></div><h1 id="stylelint">StyleLint</h1>
+<p>CSS 也有代码格式化 :( 安包<code>yarn add stylelint stylelint-config-standard -D</code>
+创建<code>.stylelintrc.js</code>文件</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#a6e22e">module</span>.<span style="color:#a6e22e">exports</span> <span style="color:#f92672">=</span> {
+  <span style="color:#66d9ef">extends</span><span style="color:#f92672">:</span> [<span style="color:#e6db74">&#34;stylelint-config-standard&#34;</span>],
+  <span style="color:#a6e22e">rules</span><span style="color:#f92672">:</span> {
+    <span style="color:#e6db74">&#34;comment-empty-line-before&#34;</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">null</span>,
+    <span style="color:#e6db74">&#34;declaration-empty-line-before&#34;</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">null</span>,
+    <span style="color:#e6db74">&#34;function-name-case&#34;</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;lower&#34;</span>,
+    <span style="color:#e6db74">&#34;no-descending-specificity&#34;</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">null</span>,
+    <span style="color:#e6db74">&#34;no-invalid-double-slash-comments&#34;</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">null</span>,
+    <span style="color:#e6db74">&#34;rule-empty-line-before&#34;</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;always&#34;</span>,
+  },
+  <span style="color:#a6e22e">ignoreFiles</span><span style="color:#f92672">:</span> [<span style="color:#e6db74">&#34;node_modules/**/*&#34;</span>, <span style="color:#e6db74">&#34;build/**/*&#34;</span>],
+};
+</code></pre></div><p>vscode 再次安装插件，在<code>.vscode</code>下的<code>settings.json</code>添加内容</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js">{
+	<span style="color:#75715e">// 使用 stylelint 自身的校验即可
+</span><span style="color:#75715e"></span>  <span style="color:#e6db74">&#34;css.validate&#34;</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">false</span>,
+  <span style="color:#e6db74">&#34;less.validate&#34;</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">false</span>,
+  <span style="color:#e6db74">&#34;scss.validate&#34;</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">false</span>,
+
+  <span style="color:#e6db74">&#34;editor.formatOnSave&#34;</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">true</span>,
+  <span style="color:#e6db74">&#34;editor.codeActionsOnSave&#34;</span><span style="color:#f92672">:</span> {
+    <span style="color:#e6db74">&#34;source.fixAll.eslint&#34;</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">true</span>,
+    <span style="color:#e6db74">&#34;source.fixAll.stylelint&#34;</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">true</span>
+  },
+}
+</code></pre></div><h1 id="插件规则冲突">插件规则冲突</h1>
+<p>插件之间会有重合的规则，规则会有冲突，安装<code>yarn add eslint-config-prettier -D</code>来解决冲突</p>
+<p>添加到<code>.eslintrc.js</code> 的 <code>extends</code>中</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js">{
+  <span style="color:#66d9ef">extends</span><span style="color:#f92672">:</span> [
+    <span style="color:#75715e">// other configs ...
+</span><span style="color:#75715e"></span>   	<span style="color:#e6db74">&#39;prettier&#39;</span>,
+    <span style="color:#e6db74">&#39;prettier/@typescript-eslint&#39;</span>,
+    <span style="color:#e6db74">&#39;prettier/react&#39;</span>,
+    <span style="color:#e6db74">&#39;prettier/unicorn&#39;</span>,
+  ]
+}
+</code></pre></div><p><code>stylelint</code>也是一样<code>yarn add stylelint-config-prettier -D</code>
+在添加</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js">{
+	<span style="color:#66d9ef">extends</span><span style="color:#f92672">:</span> [
+  	<span style="color:#75715e">// other configs ...
+</span><span style="color:#75715e"></span>    <span style="color:#e6db74">&#39;stylelint-config-prettier&#39;</span>
+  ]
+}
+</code></pre></div><h1 id="lint-staged">lint-staged</h1>
+<p>这个是对提交的代码格式化，<code>eslint</code> and <code>stylelint</code>规则检查。
+对于提交到 git 缓冲区的那些，借用<code>husky</code>工具。安装<code>yarn add husky lint-staged -D</code>
+package.json 中添加</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json">{
+  <span style="color:#f92672">&#34;husky&#34;</span>: {
+    <span style="color:#f92672">&#34;hooks&#34;</span>: {
+      <span style="color:#f92672">&#34;pre-commit&#34;</span>: <span style="color:#e6db74">&#34;lint-staged&#34;</span>
+    }
+  },
+  <span style="color:#f92672">&#34;lint-staged&#34;</span>: {
+    <span style="color:#f92672">&#34;*.{ts,tsx,js}&#34;</span>: [<span style="color:#e6db74">&#34;eslint --config .eslintrc.js&#34;</span>],
+    <span style="color:#f92672">&#34;*.{css,less,scss}&#34;</span>: [<span style="color:#e6db74">&#34;stylelint --config .stylelintrc.js&#34;</span>],
+    <span style="color:#f92672">&#34;*.{ts,tsx,js,json,html,yml,css,less,scss,md}&#34;</span>: [<span style="color:#e6db74">&#34;prettier --write&#34;</span>]
+  }
+}
+</code></pre></div><h1 id="commitlint--changelog">commitlint + changelog</h1>
+<p>对于 git commit 提交进行检查</p>
+<p>好了开发之前的一些小知识，这里就作为一个小笔记记录一下。</p>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container has-text-centered">
+    <p>&copy; <a href="https://github.com/pastSeagull">Gaviota</a> 2016</p>
+  </div>
+</section>
+
+
+
+
+
+
+
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+
+
+
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+
+

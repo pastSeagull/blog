@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jest | Gaviota</title>
+<link rel="stylesheet" href="https://pastSeagull.github.io/blog//css/style.css">
+
+
+
+<link href="https://cdn.bootcss.com/highlight.js/9.12.0/styles/monokai.min.css" rel="stylesheet">
+
+
+
+
+
+<section class="section">
+  <div class="container">
+    <nav class="nav">
+      <div class="nav-left">
+        <a class="nav-item" href="https://pastSeagull.github.io/blog/"><h1 class="title is-4">Gaviota</h1></a>
+      </div>
+      <div class="nav-right">
+        <nav class="nav-item level is-mobile">
+          
+          <a class="level-item" href="https://github.com/pastSeagull">
+            <span class="icon">
+              <i class="fa fa-github"></i>
+            </span>
+          </a>
+          
+          <a class="level-item" href="https://twitter.com/pastSeagull">
+            <span class="icon">
+              <i class="fa fa-twitter"></i>
+            </span>
+          </a>
+          
+          <a class="level-item" href="/index.xml">
+            <span class="icon">
+              <i class="fa fa-rss"></i>
+            </span>
+          </a>
+          
+        </nav>
+      </div>
+    </nav>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <h2 class="subtitle is-6">March 25, 2022</h2>
+    <h1 class="title">Jest</h1>
+    <div class="content">
+      <p>关于前端测试</p>
+<p>jest的一些基本用法
+先简单使用</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#75715e">// add.js
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">export</span> <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">add</span> <span style="color:#f92672">=</span> (<span style="color:#a6e22e">x</span>, <span style="color:#a6e22e">y</span>) =&gt; {
+    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">x</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">y</span>
+}
+<span style="color:#75715e">// add.test.js
+</span><span style="color:#75715e"></span><span style="color:#a6e22e">test</span>(<span style="color:#e6db74">&#39;add function test&#39;</span>, () =&gt; {
+    <span style="color:#a6e22e">expect</span>(<span style="color:#a6e22e">add</span>(<span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">2</span>)).<span style="color:#a6e22e">toBe</span>(<span style="color:#ae81ff">3</span>)
+})
+<span style="color:#75715e">// 命令行输出
+</span><span style="color:#75715e"></span><span style="color:#960050;background-color:#1e0010">√</span> <span style="color:#a6e22e">add</span> <span style="color:#66d9ef">function</span> <span style="color:#a6e22e">test</span> (<span style="color:#ae81ff">1</span> <span style="color:#a6e22e">ms</span>)
+
+<span style="color:#f92672">----------|---------|----------|---------|---------|-------------------</span>
+<span style="color:#a6e22e">File</span>      <span style="color:#f92672">|</span> <span style="color:#f92672">%</span> <span style="color:#a6e22e">Stmts</span> <span style="color:#f92672">|</span> <span style="color:#f92672">%</span> <span style="color:#a6e22e">Branch</span> <span style="color:#f92672">|</span> <span style="color:#f92672">%</span> <span style="color:#a6e22e">Funcs</span> <span style="color:#f92672">|</span> <span style="color:#f92672">%</span> <span style="color:#a6e22e">Lines</span> <span style="color:#f92672">|</span> <span style="color:#a6e22e">Uncovered</span> <span style="color:#a6e22e">Line</span> <span style="color:#960050;background-color:#1e0010">#</span><span style="color:#a6e22e">s</span> 
+<span style="color:#f92672">----------|---------|----------|---------|---------|-------------------</span>
+<span style="color:#a6e22e">All</span> <span style="color:#a6e22e">files</span> <span style="color:#f92672">|</span>     <span style="color:#ae81ff">100</span> <span style="color:#f92672">|</span>      <span style="color:#ae81ff">100</span> <span style="color:#f92672">|</span>     <span style="color:#ae81ff">100</span> <span style="color:#f92672">|</span>     <span style="color:#ae81ff">100</span> <span style="color:#f92672">|</span>                   
+ <span style="color:#a6e22e">add</span>.<span style="color:#a6e22e">js</span>   <span style="color:#f92672">|</span>     <span style="color:#ae81ff">100</span> <span style="color:#f92672">|</span>      <span style="color:#ae81ff">100</span> <span style="color:#f92672">|</span>     <span style="color:#ae81ff">100</span> <span style="color:#f92672">|</span>     <span style="color:#ae81ff">100</span> <span style="color:#f92672">|</span> 
+<span style="color:#f92672">----------|---------|----------|---------|---------|-------------------</span>
+</code></pre></div><p>好了你已经学会了jest了，接下来先写几个简单的测试用例</p>
+<h2 id="testing-library">testing-library</h2>
+<p>react测试库</p>
+<h3 id="测试组件">测试组件</h3>
+<p>下面是一个简单的组件测试
+<code>getByText</code></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#75715e">// app.tsx
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">export</span> <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">App</span> <span style="color:#f92672">=</span> ({ <span style="color:#a6e22e">name</span>, <span style="color:#a6e22e">age</span> }<span style="color:#f92672">:</span> {<span style="color:#a6e22e">name</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">string</span>, <span style="color:#a6e22e">age</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">number</span>}) =&gt; {
+  <span style="color:#66d9ef">return</span> (
+    <span style="color:#f92672">&lt;</span><span style="color:#a6e22e">div</span><span style="color:#f92672">&gt;</span>
+        <span style="color:#f92672">&lt;</span><span style="color:#a6e22e">span</span> <span style="color:#a6e22e">style</span><span style="color:#f92672">=</span>{{ <span style="color:#a6e22e">color</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;red&#34;</span> }}<span style="color:#f92672">&gt;</span>{<span style="color:#a6e22e">name</span>}<span style="color:#f92672">&lt;</span><span style="color:#960050;background-color:#1e0010">/span&gt;</span>
+        <span style="color:#f92672">&lt;</span><span style="color:#a6e22e">span</span><span style="color:#f92672">&gt;</span>{<span style="color:#a6e22e">age</span>}<span style="color:#f92672">&lt;</span><span style="color:#960050;background-color:#1e0010">/span&gt;</span>
+    <span style="color:#f92672">&lt;</span><span style="color:#960050;background-color:#1e0010">/div&gt;</span>
+  );
+}
+<span style="color:#75715e">// app.test.tsx
+</span><span style="color:#75715e"></span><span style="color:#a6e22e">describe</span>(<span style="color:#e6db74">&#39;test App&#39;</span>, () =&gt; {
+    <span style="color:#a6e22e">test</span>(<span style="color:#e6db74">&#39;test&#39;</span>, () =&gt; {
+
+        <span style="color:#66d9ef">let</span> <span style="color:#a6e22e">name</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;seagull&#39;</span>
+        <span style="color:#66d9ef">let</span> <span style="color:#a6e22e">age</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">24</span>
+
+        <span style="color:#a6e22e">render</span>(<span style="color:#f92672">&lt;</span><span style="color:#a6e22e">App</span> <span style="color:#a6e22e">name</span><span style="color:#f92672">=</span>{<span style="color:#a6e22e">name</span>} <span style="color:#a6e22e">age</span><span style="color:#f92672">=</span>{<span style="color:#a6e22e">age</span>} <span style="color:#f92672">/&gt;</span>)
+
+        <span style="color:#a6e22e">expect</span>(<span style="color:#a6e22e">screen</span>.<span style="color:#a6e22e">getByText</span>(<span style="color:#a6e22e">name</span>)).<span style="color:#a6e22e">toBeInTheDocument</span>() <span style="color:#75715e">// 看是否被渲染了
+</span><span style="color:#75715e"></span>        <span style="color:#a6e22e">expect</span>(<span style="color:#a6e22e">screen</span>.<span style="color:#a6e22e">getByText</span>(<span style="color:#a6e22e">name</span>)).<span style="color:#a6e22e">toHaveStyle</span>(<span style="color:#e6db74">&#34;color: red&#34;</span>) <span style="color:#75715e">// 是否存在样式
+</span><span style="color:#75715e"></span>        <span style="color:#a6e22e">expect</span>(<span style="color:#a6e22e">screen</span>.<span style="color:#a6e22e">getByText</span>(<span style="color:#a6e22e">age</span>)).<span style="color:#a6e22e">not</span>.<span style="color:#a6e22e">toHaveStyle</span>(<span style="color:#e6db74">&#34;color: red&#34;</span>) <span style="color:#75715e">// 不存在样式
+</span><span style="color:#75715e"></span>
+        <span style="color:#a6e22e">expect</span>(<span style="color:#a6e22e">screen</span>.<span style="color:#a6e22e">getByText</span>(<span style="color:#e6db74">/eagu/</span>)).<span style="color:#a6e22e">toBeInTheDocument</span>()<span style="color:#75715e">// 模糊匹配
+</span><span style="color:#75715e"></span>
+        <span style="color:#75715e">// 隐式断言
+</span><span style="color:#75715e"></span>        <span style="color:#a6e22e">screen</span>.<span style="color:#a6e22e">getByText</span>(<span style="color:#a6e22e">name</span>)
+        <span style="color:#75715e">// 显式断言
+</span><span style="color:#75715e"></span>        <span style="color:#a6e22e">expect</span>(<span style="color:#a6e22e">screen</span>.<span style="color:#a6e22e">getByText</span>(<span style="color:#a6e22e">name</span>)).<span style="color:#a6e22e">toBeInTheDocument</span>()
+
+        <span style="color:#75715e">// 还有就是看到说是用getByText来查看是否存在会报错？
+</span><span style="color:#75715e"></span>        <span style="color:#75715e">// ESLint: Use `queryBy*` queries rather than `getBy*` for checking element is NOT present(testing-library/prefer-presence-queries)
+</span><span style="color:#75715e"></span>        <span style="color:#a6e22e">expect</span>(<span style="color:#a6e22e">screen</span>.<span style="color:#a6e22e">getByText</span>(<span style="color:#e6db74">/eagu/</span>)).<span style="color:#a6e22e">toBeNull</span>()
+
+        <span style="color:#a6e22e">expect</span>(<span style="color:#a6e22e">screen</span>.<span style="color:#a6e22e">queryByText</span>(<span style="color:#e6db74">/eagu/</span>)).<span style="color:#a6e22e">toBeNull</span>()
+    })
+})
+</code></pre></div><p>大概有以下的API，具体使用那个自己根据业务情况吧</p>
+<ul>
+<li>queryByText</li>
+<li>queryByRole</li>
+<li>queryByLabelText</li>
+<li>queryByPlaceholderText</li>
+<li>queryByAltText</li>
+<li>queryByDisplayValue</li>
+<li>findByText</li>
+<li>findByRole</li>
+<li>findByLabelText</li>
+<li>findByPlaceholderText</li>
+<li>findByAltText</li>
+<li>findByDisplayValue</li>
+</ul>
+<h4 id="事件">事件</h4>
+<blockquote>
+<p>模拟用户的交互</p>
+</blockquote>
+<h3 id="http请求测试">http请求测试</h3>
+<p>这边用到了msw <a href="https://github.com/mswjs/msw">https://github.com/mswjs/msw</a></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#75715e">// 比如说测试getUser
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">import</span> { <span style="color:#a6e22e">setupServer</span> } <span style="color:#a6e22e">from</span> <span style="color:#e6db74">&#34;msw/node&#34;</span>
+<span style="color:#66d9ef">import</span> { <span style="color:#a6e22e">rest</span> } <span style="color:#a6e22e">from</span> <span style="color:#e6db74">&#34;msw&#34;</span>
+
+<span style="color:#66d9ef">const</span> <span style="color:#a6e22e">server</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">setupServer</span>()
+
+<span style="color:#75715e">// 测试前回调
+</span><span style="color:#75715e"></span><span style="color:#a6e22e">beforeAll</span>(() =&gt; <span style="color:#a6e22e">server</span>.<span style="color:#a6e22e">listen</span>())
+
+<span style="color:#75715e">// 每一次测试跑完都执行
+</span><span style="color:#75715e"></span><span style="color:#a6e22e">afterEach</span>(() =&gt; <span style="color:#a6e22e">server</span>.<span style="color:#a6e22e">resetHandlers</span>())
+
+<span style="color:#75715e">// 测试跑完后回调
+</span><span style="color:#75715e"></span><span style="color:#a6e22e">afterAll</span>(()=&gt; <span style="color:#a6e22e">server</span>.<span style="color:#a6e22e">close</span>())
+
+<span style="color:#75715e">// 测试方法是否返回正确的数据 &amp; 页面是否正确的渲染
+</span><span style="color:#75715e"></span><span style="color:#a6e22e">describe</span>(<span style="color:#e6db74">&#39;test http function&#39;</span>, () =&gt; {
+    <span style="color:#a6e22e">test</span>(<span style="color:#e6db74">&#39;test getUser&#39;</span>, <span style="color:#66d9ef">async</span>() =&gt; {
+        <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">users</span> <span style="color:#f92672">=</span> {
+            <span style="color:#a6e22e">name</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;seagull&#39;</span>,
+            <span style="color:#a6e22e">age</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">17</span>
+        }
+        <span style="color:#a6e22e">server</span>.<span style="color:#a6e22e">use</span>(
+            <span style="color:#a6e22e">rest</span>.<span style="color:#a6e22e">get</span>(<span style="color:#e6db74">`</span><span style="color:#e6db74">${</span><span style="color:#a6e22e">apiUrl</span><span style="color:#e6db74">}</span><span style="color:#e6db74">/getUser`</span>, (<span style="color:#a6e22e">req</span>, <span style="color:#a6e22e">res</span>, <span style="color:#a6e22e">ctx</span>) =&gt; {
+                <span style="color:#66d9ef">return</span> (
+                    <span style="color:#a6e22e">res</span>(<span style="color:#a6e22e">ctx</span>.<span style="color:#a6e22e">json</span>(<span style="color:#a6e22e">users</span>))
+                )
+            })
+        )
+        <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">result</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">await</span>(<span style="color:#a6e22e">getUser</span>())
+        <span style="color:#a6e22e">expect</span>(<span style="color:#a6e22e">result</span>.<span style="color:#a6e22e">data</span>).<span style="color:#a6e22e">toEqual</span>(<span style="color:#a6e22e">users</span>);
+
+        <span style="color:#75715e">// 渲染后数据是否存在
+</span><span style="color:#75715e"></span>        <span style="color:#75715e">// 一般来说getByText来查找，不过这是异步。使用findByText来判断一个元素是否存在
+</span><span style="color:#75715e"></span>        <span style="color:#a6e22e">render</span>(<span style="color:#f92672">&lt;</span><span style="color:#a6e22e">User</span> <span style="color:#f92672">/&gt;</span>)
+        <span style="color:#a6e22e">expect</span>(<span style="color:#66d9ef">await</span> <span style="color:#a6e22e">screen</span>.<span style="color:#a6e22e">findByText</span>(<span style="color:#e6db74">&#34;seagull&#34;</span>)).<span style="color:#a6e22e">toBeInTheDocument</span>()
+    })
+})
+</code></pre></div><h3 id="断言函数">断言函数</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#a6e22e">toBeDisabled</span>
+<span style="color:#a6e22e">toBeEnabled</span>
+<span style="color:#a6e22e">toBeEmpty</span>
+<span style="color:#a6e22e">toBeEmptyDOMElement</span>
+<span style="color:#a6e22e">toBeInTheDocument</span>
+<span style="color:#a6e22e">toBeInvalid</span>
+<span style="color:#a6e22e">toBeRequired</span>
+<span style="color:#a6e22e">toBeValid</span>
+<span style="color:#a6e22e">toBeVisible</span>
+<span style="color:#a6e22e">toContainElement</span>
+<span style="color:#a6e22e">toContainHTML</span>
+<span style="color:#a6e22e">toHaveAttribute</span>
+<span style="color:#a6e22e">toHaveClass</span>
+<span style="color:#a6e22e">toHaveFocus</span>
+<span style="color:#a6e22e">toHaveFormValues</span>
+<span style="color:#a6e22e">toHaveStyle</span>
+<span style="color:#a6e22e">toHaveTextContent</span>
+<span style="color:#a6e22e">toHaveValue</span>
+<span style="color:#a6e22e">toHaveDisplayValue</span>
+<span style="color:#a6e22e">toBeChecked</span>
+<span style="color:#a6e22e">toBePartiallyChecked</span>
+<span style="color:#a6e22e">toHaveDescription</span>
+</code></pre></div><h2 id="vue-test-utils">vue-test-utils</h2>
+<p>vue的话使用的是这个库https://github.com/vuejs/vue-test-utils</p>
+<ul>
+<li>挂载组件</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#66d9ef">import</span> { <span style="color:#a6e22e">mount</span> } <span style="color:#a6e22e">from</span> <span style="color:#e6db74">&#39;@vue/test-utils&#39;</span>
+<span style="color:#66d9ef">import</span> <span style="color:#a6e22e">Counter</span> <span style="color:#a6e22e">from</span> <span style="color:#e6db74">&#39;./counter&#39;</span>
+<span style="color:#75715e">// 用mount来挂载组件
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">wrapper</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">mount</span>(<span style="color:#a6e22e">Counter</span>)
+
+<span style="color:#75715e">// 获取组件的实例
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">vm</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">wrapper</span>.<span style="color:#a6e22e">vm</span>
+</code></pre></div><p>官方文档的例子</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#66d9ef">export</span> <span style="color:#66d9ef">default</span> {
+  <span style="color:#a6e22e">template</span><span style="color:#f92672">:</span> <span style="color:#e6db74">`
+</span><span style="color:#e6db74">    &lt;div&gt;
+</span><span style="color:#e6db74">      &lt;span class=&#34;count&#34;&gt;{{ count }}&lt;/span&gt;
+</span><span style="color:#e6db74">      &lt;button @click=&#34;increment&#34;&gt;Increment&lt;/button&gt;
+</span><span style="color:#e6db74">    &lt;/div&gt;
+</span><span style="color:#e6db74">  `</span>,
+
+  <span style="color:#a6e22e">data</span> () {
+    <span style="color:#66d9ef">return</span> {
+      <span style="color:#a6e22e">count</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">0</span>
+    }
+  },
+
+  <span style="color:#a6e22e">methods</span><span style="color:#f92672">:</span> {
+    <span style="color:#a6e22e">increment</span> () {
+      <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">count</span><span style="color:#f92672">++</span>
+    }
+  }
+}
+<span style="color:#75715e">// test
+</span><span style="color:#75715e"></span>
+<span style="color:#75715e">// 查找button
+</span><span style="color:#75715e"></span><span style="color:#a6e22e">test</span>(<span style="color:#e6db74">&#39;test has a button&#39;</span>, () =&gt; {
+    <span style="color:#a6e22e">expect</span>(<span style="color:#a6e22e">wrapper</span>.<span style="color:#a6e22e">contains</span>(<span style="color:#e6db74">&#39;button&#39;</span>)).<span style="color:#a6e22e">toBe</span>(<span style="color:#66d9ef">true</span>)
+})
+<span style="color:#75715e">// 模拟点击后 data里的count的值发生变化
+</span><span style="color:#75715e"></span><span style="color:#a6e22e">test</span>(<span style="color:#e6db74">&#39;test increment &amp; count&#39;</span>, () =&gt; {
+    <span style="color:#a6e22e">expect</span>(<span style="color:#a6e22e">vm</span>.<span style="color:#a6e22e">count</span>).<span style="color:#a6e22e">toBe</span>(<span style="color:#ae81ff">0</span>)
+    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">button</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">wrapper</span>.<span style="color:#a6e22e">find</span>(<span style="color:#e6db74">&#39;button&#39;</span>)
+    <span style="color:#a6e22e">button</span>.<span style="color:#a6e22e">trigger</span>(<span style="color:#e6db74">&#39;click&#39;</span>)
+    <span style="color:#a6e22e">expect</span>(<span style="color:#a6e22e">vm</span>.<span style="color:#a6e22e">count</span>).<span style="color:#a6e22e">toBe</span>(<span style="color:#ae81ff">1</span>)
+})
+</code></pre></div><p>emmmmmm，api太多了，更具体的api用法还是看官网文档吧，这边先简单使用了前端的测试。
+具体的测试还是得看业务需求吧</p>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container has-text-centered">
+    <p>&copy; <a href="https://github.com/pastSeagull">Gaviota</a> 2016</p>
+  </div>
+</section>
+
+
+
+
+
+
+
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+
+
+
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+
+

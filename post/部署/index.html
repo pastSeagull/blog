@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>部署 | Gaviota</title>
+<link rel="stylesheet" href="https://pastSeagull.github.io/blog//css/style.css">
+
+
+
+<link href="https://cdn.bootcss.com/highlight.js/9.12.0/styles/monokai.min.css" rel="stylesheet">
+
+
+
+
+
+<section class="section">
+  <div class="container">
+    <nav class="nav">
+      <div class="nav-left">
+        <a class="nav-item" href="https://pastSeagull.github.io/blog/"><h1 class="title is-4">Gaviota</h1></a>
+      </div>
+      <div class="nav-right">
+        <nav class="nav-item level is-mobile">
+          
+          <a class="level-item" href="https://github.com/pastSeagull">
+            <span class="icon">
+              <i class="fa fa-github"></i>
+            </span>
+          </a>
+          
+          <a class="level-item" href="https://twitter.com/pastSeagull">
+            <span class="icon">
+              <i class="fa fa-twitter"></i>
+            </span>
+          </a>
+          
+          <a class="level-item" href="/index.xml">
+            <span class="icon">
+              <i class="fa fa-rss"></i>
+            </span>
+          </a>
+          
+        </nav>
+      </div>
+    </nav>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <h2 class="subtitle is-6">May 21, 2022</h2>
+    <h1 class="title">部署</h1>
+    <div class="content">
+      <p>关于前端部署的一些知识点，<code>docker</code> &amp; <code>docker-compose</code> &amp; <code>node</code> &amp; <code>nginx</code>，的一些尝试。</p>
+<p>先来创建一个单页应用，<code>create-react-app</code>。
+这时候我们直接打包<code>yarn run build</code>，可以看到控制台给出的提示。
+<img src="https://raw.githubusercontent.com/pastSeagull/blog/main/img/build.png" alt="avatar">
+这时候我们执行<code>npx serve -s build</code>访问<code>IP:3000</code>可以看到打包好的效果了。</p>
+<h2 id="dockerfile">Dockerfile</h2>
+<p>先在项目文件夹下新建两个文件。
+<code>docker-compose.yaml</code> <code>simple.Dockerfile</code></p>
+<p>上面通过打包之后执行<code>npx serve -s build</code>
+我们可以利用<code>Dockerfile</code>来简化这个这个步骤。
+<code>simple.Dockerfile</code></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-dockerfile" data-lang="dockerfile"><span style="color:#66d9ef">FROM</span><span style="color:#e6db74"> node:14-alpine</span><span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">WORKDIR</span><span style="color:#e6db74"> /code</span><span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">ADD</span> . /code<span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">RUN</span> yarn <span style="color:#f92672">&amp;&amp;</span> npm run build<span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">CMD</span> npx serve -s build<span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">EXPOSE</span><span style="color:#e6db74"> 3000</span><span style="color:#960050;background-color:#1e0010">
+</span></code></pre></div><p><code>docker-compose.yaml</code></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-dockerfile" data-lang="dockerfile">version: <span style="color:#e6db74">&#34;3&#34;</span><span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010"></span>services:<span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010"></span>  simple:<span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010"></span>    build:<span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010"></span>      context: .<span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010"></span>      dockerfile: simple.Dockerfile<span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010"></span>    ports:<span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010"></span>      - 4000:80<span style="color:#960050;background-color:#1e0010">
+</span></code></pre></div><p>执行命令<code>docker-compose up --build simple</code></p>
+<p>这里大部分时间都是在构建镜像和下载依赖包的过程，我们可以使用docker的缓存来加速build。
+使用nginx来优化镜像的构建。</p>
+<h2 id="缓存和多阶段构建">缓存和多阶段构建</h2>
+<p>可以利用<code>docker</code>缓存来加速build。<a href="https://docs.docker.com/get-started/09_image_best/">docker</a>
+<img src="https://raw.githubusercontent.com/pastSeagull/blog/main/img/docker-build.png" alt="avatar"></p>
+<ul>
+<li>多阶段构建</li>
+</ul>
+<blockquote>
+<p>build打包好的dist文件夹里面其实都是静态文件，我们只需要node环境来帮我们打包即可。
+之后静态文件我们只需要使用nginx对静态页面进行服务化即可</p>
+</blockquote>
+<p><code>simple.Dockerfile</code>修改如下</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-dockerfile" data-lang="dockerfile"><span style="color:#66d9ef">FROM</span><span style="color:#e6db74"> node:14-alpine as builder</span><span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">WORKDIR</span><span style="color:#e6db74"> /code</span><span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#75715e"># 单独分离 package.json，是为了安装依赖可最大限度利用缓存</span><span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">ADD</span> package.json yarn.lock /code/<span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">RUN</span> yarn<span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">ADD</span> . /code<span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">RUN</span> npm run build<span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#75715e"># 选择更小体积的基础镜像</span><span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">FROM</span><span style="color:#e6db74"> nginx:alpine</span><span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">COPY</span> --from<span style="color:#f92672">=</span>builder code/build /usr/share/nginx/html<span style="color:#960050;background-color:#1e0010">
+</span></code></pre></div><p>这里算是前端部署优化的第一步吧</p>
+<blockquote>
+<p>使用了docker的缓存来优化build的速度
+多阶段构建，使用nginx来代替node镜像。</p>
+</blockquote>
+<h2 id="单页应用路由--强缓存">单页应用路由 &amp; 强缓存</h2>
+<p>基础的八股文中的前端路由就不用多说了吧。让我们在项目中添加路由<code>yarn add react-router-dom</code>。并修改<code>App.js</code>。
+<code>index.js</code>在用<code>&lt;BrowserRouter&gt;</code>来包裹一下。
+<img src="https://raw.githubusercontent.com/pastSeagull/blog/main/img/router-app.png" alt="avatar"></p>
+<p>这时候我们就得出了一个很简单页面。</p>
+<blockquote>
+<p><code>/</code>首页
+点击跳转<code>/about</code></p>
+</blockquote>
+<p>这时候我们点击跳转，路由是正常运行的，当我们通过<code>url</code>访问<code>IP:4000/about</code>的时候就404了。
+我们需要配置一下<code>nginx</code>。</p>
+<pre><code class="language-editorconfig" data-lang="editorconfig">location / {
+    # 如果资源不存在，则回退到 index.html
+    try_files  $uri $uri/ /index.html;  
+}
+</code></pre><p>这时候我们在访问就正常了。</p>
+<ul>
+<li>强缓存 &amp; 协商缓存。</li>
+</ul>
+<blockquote>
+<p>缓存的话是分为强缓存和协商缓存的。这里用的是强缓存。
+通过配置<code>Cache-Control</code>来设置资源的缓存时间。</p>
+</blockquote>
+<p>我们进入打包好的dist文件夹里面，我们看到像js资源都是带有<code>hash</code>值的。如果我们修改了这类型的资源
+hash值就会发生变化，旧的资源就不会进行访问了。</p>
+<ul>
+<li>带有hash的资源我们设置强缓存。</li>
+<li>没有的就设置不进行强缓存。</li>
+</ul>
+<p>新建文件<code>nginx.conf</code> <code>router.Dockerfile</code>
+router.Dockerfile</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-dockerfile" data-lang="dockerfile"><span style="color:#66d9ef">FROM</span><span style="color:#e6db74"> node:14-alpine as builder</span><span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">WORKDIR</span><span style="color:#e6db74"> /code</span><span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#75715e"># 单独分离 package.json，是为了 yarn 可最大限度利用缓存</span><span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">ADD</span> package.json yarn.lock /code/<span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">RUN</span> yarn<span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#75715e"># 单独分离 public/src，是为了避免 ADD . /code 时，因为 Readme/nginx.conf 的更改避免缓存生效</span><span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#75715e"># 也是为了 npm run build 可最大限度利用缓存</span><span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">ADD</span> public /code/public<span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">ADD</span> src /code/src<span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">RUN</span> npm run build<span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#75715e"># 选择更小体积的基础镜像</span><span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">FROM</span><span style="color:#e6db74"> nginx:alpine</span><span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">ADD</span> nginx.conf /etc/nginx/conf.d/default.conf<span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">COPY</span> --from<span style="color:#f92672">=</span>builder code/build /usr/share/nginx/html<span style="color:#960050;background-color:#1e0010">
+</span></code></pre></div><p>nginx.conf</p>
+<pre><code class="language-editorconfig" data-lang="editorconfig">server {
+    listen       80;
+    server_name  localhost;
+
+    root   /usr/share/nginx/html;
+    index  index.html index.htm;
+
+    location / {
+        # 解决单页应用服务端路由的问题
+        try_files  $uri $uri/ /index.html;  
+
+        # 非带 hash 的资源，需要配置 Cache-Control: no-cache，避免浏览器默认为强缓存
+        expires -1;
+    }
+
+    location /static {
+        # 带 hash 的资源，需要配置长期缓存
+        expires 1y;
+    }
+}
+</code></pre><p>修改<code>docker-compose.yaml</code></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">version</span>: <span style="color:#e6db74">&#34;3&#34;</span>
+<span style="color:#f92672">services</span>:
+  <span style="color:#f92672">route</span>:
+    <span style="color:#f92672">build</span>:
+      <span style="color:#f92672">context</span>: <span style="color:#ae81ff">.</span>
+      <span style="color:#f92672">dockerfile</span>: <span style="color:#ae81ff">router.Dockerfile</span>
+    <span style="color:#f92672">ports</span>:
+      - <span style="color:#ae81ff">3000</span>:<span style="color:#ae81ff">80</span>
+  <span style="color:#f92672">simple</span>:
+    <span style="color:#f92672">build</span>:
+      <span style="color:#f92672">context</span>: <span style="color:#ae81ff">.</span>
+      <span style="color:#f92672">dockerfile</span>: <span style="color:#ae81ff">simple.Dockerfile</span>
+    <span style="color:#f92672">ports</span>:
+      - <span style="color:#ae81ff">4000</span>:<span style="color:#ae81ff">80</span>
+</code></pre></div><p>到这里我们来运行一下<code>docker-compose up --build route</code>
+<img src="https://raw.githubusercontent.com/pastSeagull/blog/main/img/cache.png" alt="avatar"></p>
+<p>ok,看一下js文件，已经设置了强缓存了。其他不带有hash资源的设置成了<code>Cache-Control: no-cache</code>。</p>
+<h2 id="参考">参考</h2>
+<hr>
+<ol>
+<li><a href="https://docs.docker.com/get-started/">docker文档</a></li>
+<li><a href="https://q.shanyue.tech/deploy/#%E6%96%87%E5%AD%97%E4%B8%8E%E8%A7%86%E9%A2%91%E5%86%85%E5%AE%B9">前端部署</a></li>
+<li><a href="https://juejin.cn/post/7071667437384499237">前端docker快速入门——Compose</a></li>
+</ol>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container has-text-centered">
+    <p>&copy; <a href="https://github.com/pastSeagull">Gaviota</a> 2016</p>
+  </div>
+</section>
+
+
+
+
+
+
+
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+
+
+
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+
+

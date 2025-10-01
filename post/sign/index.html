@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>perfect-freehand &amp; vue3 | Gaviota</title>
+<link rel="stylesheet" href="https://pastSeagull.github.io/blog//css/style.css">
+
+
+
+<link href="https://cdn.bootcss.com/highlight.js/9.12.0/styles/monokai.min.css" rel="stylesheet">
+
+
+
+
+
+<section class="section">
+  <div class="container">
+    <nav class="nav">
+      <div class="nav-left">
+        <a class="nav-item" href="https://pastSeagull.github.io/blog/"><h1 class="title is-4">Gaviota</h1></a>
+      </div>
+      <div class="nav-right">
+        <nav class="nav-item level is-mobile">
+          
+          <a class="level-item" href="https://github.com/pastSeagull">
+            <span class="icon">
+              <i class="fa fa-github"></i>
+            </span>
+          </a>
+          
+          <a class="level-item" href="https://twitter.com/pastSeagull">
+            <span class="icon">
+              <i class="fa fa-twitter"></i>
+            </span>
+          </a>
+          
+          <a class="level-item" href="/index.xml">
+            <span class="icon">
+              <i class="fa fa-rss"></i>
+            </span>
+          </a>
+          
+        </nav>
+      </div>
+    </nav>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <h2 class="subtitle is-6">April 25, 2024</h2>
+    <h1 class="title">perfect-freehand &amp; vue3</h1>
+    <div class="content">
+      <p>一个小记录，如何在vue3中使用<code>perfect-freehand</code>，教程和官网都是react的例子 我这边就做一个简单的搬运和使用。</p>
+<p>关于如何在vue3中使用<code>perfect-freehand</code>，如果简单点有个<code>v-perfect-freehand</code>。</p>
+<p>有个触碰签名的业务场景，看了几个感觉还是<code>perfect-freehand</code>模拟笔锋比较舒服点。但是官方示例上用的是react来写的，还用到了<code>tldraw</code>。</p>
+<p>然后看了一下<code>perfect-freehand</code>没有依赖react 这时候我们搬运过去，但是<code>tldraw</code>是依赖react的。</p>
+<p><a href="https://codesandbox.io/p/sandbox/perfect-freehand-example-biwyi?file=%2Fsrc%2FApp.js%3A40%2C11&amp;fontsize=14&amp;hidenavigation=1&amp;theme=dark">官网简单demo</a></p>
+<p>看了官网的示例，大致就是监听svg的<code>pointerdown</code> <code>pointermove</code>，这时候我们的代码是这样的</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-vue" data-lang="vue">
+&lt;<span style="color:#f92672">template</span>&gt;
+  &lt;<span style="color:#f92672">svg</span> <span style="color:#a6e22e">class</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;svg&#34;</span> <span style="color:#a6e22e">id</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;pen&#34;</span>
+       <span style="color:#f92672">@pointerdown</span><span style="color:#e6db74">=&#34;handlePointerDown&#34;</span>
+       <span style="color:#f92672">@pointermove</span><span style="color:#e6db74">=&#34;handlePointerMove&#34;</span>
+  &gt;
+    &lt;<span style="color:#f92672">path</span> <span style="color:#f92672">:d</span><span style="color:#e6db74">=&#34;pathData&#34;</span>/&gt;
+  &lt;/<span style="color:#f92672">svg</span>&gt;
+&lt;/<span style="color:#f92672">template</span>&gt;
+
+&lt;<span style="color:#f92672">script</span> <span style="color:#a6e22e">setup</span> <span style="color:#a6e22e">lang</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;ts&#34;</span>&gt;
+  <span style="color:#66d9ef">import</span> { <span style="color:#a6e22e">getStroke</span> } <span style="color:#a6e22e">from</span> <span style="color:#e6db74">&#34;perfect-freehand&#34;</span>;
+
+  <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">pathData</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">ref</span>()
+  <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">points</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">ref</span><span style="color:#f92672">&lt;</span>(<span style="color:#a6e22e">number</span>[] <span style="color:#f92672">|</span> {
+    <span style="color:#a6e22e">x</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">number</span>;
+    <span style="color:#a6e22e">y</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">number</span>;
+    <span style="color:#a6e22e">pressure</span><span style="color:#f92672">?:</span> <span style="color:#a6e22e">number</span>;
+  })[]<span style="color:#f92672">&gt;</span>([])
+
+  <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">options</span> <span style="color:#f92672">=</span> {
+    <span style="color:#a6e22e">size</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">32</span>,
+    <span style="color:#a6e22e">thinning</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">0.5</span>,
+    <span style="color:#a6e22e">smoothing</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">0.5</span>,
+    <span style="color:#a6e22e">streamline</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">0.5</span>,
+    <span style="color:#a6e22e">easing</span><span style="color:#f92672">:</span> (<span style="color:#a6e22e">t</span>) =&gt; <span style="color:#a6e22e">t</span>,
+    <span style="color:#a6e22e">start</span><span style="color:#f92672">:</span> {
+      <span style="color:#a6e22e">taper</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">0</span>,
+      <span style="color:#a6e22e">easing</span><span style="color:#f92672">:</span> (<span style="color:#a6e22e">t</span>) =&gt; <span style="color:#a6e22e">t</span>,
+      <span style="color:#a6e22e">cap</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">true</span>
+    },
+    <span style="color:#a6e22e">end</span><span style="color:#f92672">:</span> {
+      <span style="color:#a6e22e">taper</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">100</span>,
+      <span style="color:#a6e22e">easing</span><span style="color:#f92672">:</span> (<span style="color:#a6e22e">t</span>) =&gt; <span style="color:#a6e22e">t</span>,
+      <span style="color:#a6e22e">cap</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">true</span>
+    }
+  };
+
+  <span style="color:#66d9ef">function</span> <span style="color:#a6e22e">getSvgPathFromStroke</span>(<span style="color:#a6e22e">stroke</span>) {
+    <span style="color:#66d9ef">if</span> (<span style="color:#f92672">!</span><span style="color:#a6e22e">stroke</span>.<span style="color:#a6e22e">length</span>) <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#34;&#34;</span>
+
+    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">d</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">stroke</span>.<span style="color:#a6e22e">reduce</span>(
+        (<span style="color:#a6e22e">acc</span>, [<span style="color:#a6e22e">x0</span>, <span style="color:#a6e22e">y0</span>], <span style="color:#a6e22e">i</span>, <span style="color:#a6e22e">arr</span>) =&gt; {
+          <span style="color:#66d9ef">const</span> [<span style="color:#a6e22e">x1</span>, <span style="color:#a6e22e">y1</span>] <span style="color:#f92672">=</span> <span style="color:#a6e22e">arr</span>[(<span style="color:#a6e22e">i</span> <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>) <span style="color:#f92672">%</span> <span style="color:#a6e22e">arr</span>.<span style="color:#a6e22e">length</span>]
+          <span style="color:#a6e22e">acc</span>.<span style="color:#a6e22e">push</span>(<span style="color:#a6e22e">x0</span>, <span style="color:#a6e22e">y0</span>, (<span style="color:#a6e22e">x0</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">x1</span>) <span style="color:#f92672">/</span> <span style="color:#ae81ff">2</span>, (<span style="color:#a6e22e">y0</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">y1</span>) <span style="color:#f92672">/</span> <span style="color:#ae81ff">2</span>)
+          <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">acc</span>
+        },
+        [<span style="color:#e6db74">&#34;M&#34;</span>, ...<span style="color:#a6e22e">stroke</span>[<span style="color:#ae81ff">0</span>], <span style="color:#e6db74">&#34;Q&#34;</span>]
+    )
+
+    <span style="color:#a6e22e">d</span>.<span style="color:#a6e22e">push</span>(<span style="color:#e6db74">&#34;Z&#34;</span>)
+    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">d</span>.<span style="color:#a6e22e">join</span>(<span style="color:#e6db74">&#34; &#34;</span>)
+  }
+
+  <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">handlePointerDown</span> <span style="color:#f92672">=</span> (<span style="color:#a6e22e">e</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">PointerEvent</span>) =&gt; {
+    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">targetElement</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">e</span>.<span style="color:#a6e22e">target</span> <span style="color:#a6e22e">as</span> <span style="color:#a6e22e">HTMLElement</span>;
+    <span style="color:#a6e22e">targetElement</span>.<span style="color:#a6e22e">setPointerCapture</span>(<span style="color:#a6e22e">e</span>.<span style="color:#a6e22e">pointerId</span>);
+    <span style="color:#a6e22e">points</span>.<span style="color:#a6e22e">value</span> <span style="color:#f92672">=</span> [[<span style="color:#a6e22e">e</span>.<span style="color:#a6e22e">pageX</span>, <span style="color:#a6e22e">e</span>.<span style="color:#a6e22e">pageY</span>, <span style="color:#a6e22e">e</span>.<span style="color:#a6e22e">pressure</span>]]
+    <span style="color:#a6e22e">changePath</span>()
+  }
+  <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">handlePointerMove</span> <span style="color:#f92672">=</span> (<span style="color:#a6e22e">e</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">PointerEvent</span>) =&gt; {
+    <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">e</span>.<span style="color:#a6e22e">buttons</span> <span style="color:#f92672">!==</span> <span style="color:#ae81ff">1</span>) {
+      <span style="color:#66d9ef">return</span>
+    } <span style="color:#66d9ef">else</span> {
+      <span style="color:#a6e22e">points</span>.<span style="color:#a6e22e">value</span> <span style="color:#f92672">=</span> [...<span style="color:#a6e22e">points</span>.<span style="color:#a6e22e">value</span>, [<span style="color:#a6e22e">e</span>.<span style="color:#a6e22e">pageX</span>, <span style="color:#a6e22e">e</span>.<span style="color:#a6e22e">pageY</span>, <span style="color:#a6e22e">e</span>.<span style="color:#a6e22e">pressure</span>]]
+      <span style="color:#a6e22e">changePath</span>()
+    }
+  }
+
+  <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">changePath</span> <span style="color:#f92672">=</span> () =&gt; {
+    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">stroke</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">getStroke</span>(<span style="color:#a6e22e">points</span>.<span style="color:#a6e22e">value</span>, <span style="color:#a6e22e">options</span>);
+    <span style="color:#a6e22e">pathData</span>.<span style="color:#a6e22e">value</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">getSvgPathFromStroke</span>(<span style="color:#a6e22e">stroke</span>);
+  }
+&lt;/<span style="color:#f92672">script</span>&gt;
+</code></pre></div><p>这时候已经跟官方demo差不多一样的效果，等等 你不是签名的业务吗？为啥只能画一个path？
+看官网的效果是这样的 <a href="https://www.perfectfreehand.com/">预想的效果</a></p>
+<p>粗略的看了一下用的是<code>@tldraw/core</code> 的 <code>SVGContainer</code>组件 我偷懒点直接for循环svg的path吧
+这时候监听svg的 <code>pointerup</code> 把pathData push进去然后把<code>pathData</code>值给清空了。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-html" data-lang="html">&lt;<span style="color:#f92672">svg</span> <span style="color:#a6e22e">class</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;svg&#34;</span> <span style="color:#a6e22e">id</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;pen&#34;</span>
+     <span style="color:#960050;background-color:#1e0010">@</span><span style="color:#a6e22e">pointerdown</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;handlePointerDown&#34;</span>
+     <span style="color:#960050;background-color:#1e0010">@</span><span style="color:#a6e22e">pointermove</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;handlePointerMove&#34;</span>
+     <span style="color:#960050;background-color:#1e0010">@</span><span style="color:#a6e22e">pointerup</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;handlePointerUp&#34;</span>
+&gt;
+    &lt;<span style="color:#f92672">path</span> <span style="color:#a6e22e">v-for</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;item in pathDataList&#34;</span> <span style="color:#a6e22e">:d</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;item.path&#34;</span> <span style="color:#a6e22e">:fill</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;item.fill&#34;</span>/&gt;
+    &lt;<span style="color:#f92672">path</span> <span style="color:#a6e22e">:d</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;pathData&#34;</span> <span style="color:#a6e22e">:fill</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;penColor&#34;</span>/&gt;
+&lt;/<span style="color:#f92672">svg</span>&gt;
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ts" data-lang="ts"><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">handlePointerUp</span> <span style="color:#f92672">=</span> () <span style="color:#f92672">=&gt;</span> {
+  <span style="color:#a6e22e">pathDataList</span>.<span style="color:#a6e22e">value</span>.<span style="color:#a6e22e">push</span>({<span style="color:#a6e22e">path</span>: <span style="color:#66d9ef">pathData.value</span>, <span style="color:#a6e22e">fill</span>: <span style="color:#66d9ef">penColor.value</span>})
+  <span style="color:#a6e22e">pathData</span>.<span style="color:#a6e22e">value</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;&#34;</span>
+};
+</code></pre></div><p>到这里已经大致完成搬运工作了 至于字体大小修改<code>options</code>里面的size，颜色自己改一下svg的<code>fill</code>
+然后选择<code>easing</code>就自己看代码搬运过来就行了。就懒得贴上来了</p>
+<p>最后就是如果svg是包在别的div里面的 不是全屏都能写，这时候就要减去偏移量了，因为mousevent 没有基于容器的准确xy</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ts" data-lang="ts"><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">offsetX</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">150</span>
+<span style="color:#66d9ef">const</span> <span style="color:#a6e22e">offsetY</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">130</span>
+
+<span style="color:#a6e22e">points</span>.<span style="color:#a6e22e">value</span> <span style="color:#f92672">=</span> [[<span style="color:#a6e22e">e</span>.<span style="color:#a6e22e">pageX</span> <span style="color:#f92672">-</span> <span style="color:#a6e22e">offsetX</span>, <span style="color:#a6e22e">e</span>.<span style="color:#a6e22e">pageY</span> <span style="color:#f92672">-</span> <span style="color:#a6e22e">offsetY</span>, <span style="color:#a6e22e">e</span>.<span style="color:#a6e22e">pressure</span>]]
+<span style="color:#a6e22e">points</span>.<span style="color:#a6e22e">value</span> <span style="color:#f92672">=</span> [...<span style="color:#a6e22e">points</span>.<span style="color:#a6e22e">value</span>, [<span style="color:#a6e22e">e</span>.<span style="color:#a6e22e">pageX</span> <span style="color:#f92672">-</span> <span style="color:#a6e22e">offsetX</span>, <span style="color:#a6e22e">e</span>.<span style="color:#a6e22e">pageY</span> <span style="color:#f92672">-</span> <span style="color:#a6e22e">offsetY</span>, <span style="color:#a6e22e">e</span>.<span style="color:#a6e22e">pressure</span>]]
+</code></pre></div><p>减去多少的值就看你页面的布局了。
+然后你也可以选择用<code>svg</code>去渲染 也可以用<code>canvas</code>去渲染看你业务场景和喜好了。</p>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container has-text-centered">
+    <p>&copy; <a href="https://github.com/pastSeagull">Gaviota</a> 2016</p>
+  </div>
+</section>
+
+
+
+
+
+
+
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+
+
+
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+
+

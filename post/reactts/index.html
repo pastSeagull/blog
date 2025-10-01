@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>React&amp;ts | Gaviota</title>
+<link rel="stylesheet" href="https://pastSeagull.github.io/blog//css/style.css">
+
+
+
+<link href="https://cdn.bootcss.com/highlight.js/9.12.0/styles/monokai.min.css" rel="stylesheet">
+
+
+
+
+
+<section class="section">
+  <div class="container">
+    <nav class="nav">
+      <div class="nav-left">
+        <a class="nav-item" href="https://pastSeagull.github.io/blog/"><h1 class="title is-4">Gaviota</h1></a>
+      </div>
+      <div class="nav-right">
+        <nav class="nav-item level is-mobile">
+          
+          <a class="level-item" href="https://github.com/pastSeagull">
+            <span class="icon">
+              <i class="fa fa-github"></i>
+            </span>
+          </a>
+          
+          <a class="level-item" href="https://twitter.com/pastSeagull">
+            <span class="icon">
+              <i class="fa fa-twitter"></i>
+            </span>
+          </a>
+          
+          <a class="level-item" href="/index.xml">
+            <span class="icon">
+              <i class="fa fa-rss"></i>
+            </span>
+          </a>
+          
+        </nav>
+      </div>
+    </nav>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <h2 class="subtitle is-6">August 5, 2022</h2>
+    <h1 class="title">React&amp;ts</h1>
+    <div class="content">
+      <p>React的一些Ts类型</p>
+<h2 id="basic">Basic</h2>
+<ul>
+<li>指定精确的值</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ts" data-lang="ts"><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">TStatus</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">status</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;waiting&#34;</span> <span style="color:#f92672">|</span> <span style="color:#e6db74">&#34;success&#34;</span>;
+</code></pre></div><ul>
+<li>arrayList</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ts" data-lang="ts"><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">objArr</span> <span style="color:#f92672">=</span> {
+  <span style="color:#a6e22e">id</span>: <span style="color:#66d9ef">string</span>;
+  <span style="color:#a6e22e">title</span>: <span style="color:#66d9ef">string</span>;
+}[];
+<span style="color:#75715e">// use
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> [<span style="color:#a6e22e">objArr</span>] <span style="color:#f92672">=</span> <span style="color:#a6e22e">useState</span>&lt;<span style="color:#f92672">objArr</span>&gt;(
+    [
+        {
+            <span style="color:#a6e22e">id</span>: <span style="color:#66d9ef">1</span>,
+            <span style="color:#a6e22e">title</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;title&#34;</span>
+        }
+    ]
+)
+<span style="color:#75715e">// or
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">objArr</span> {
+    <span style="color:#a6e22e">id</span>: <span style="color:#66d9ef">string</span>;
+    <span style="color:#a6e22e">title</span>: <span style="color:#66d9ef">string</span>;
+}
+<span style="color:#66d9ef">const</span> [<span style="color:#a6e22e">objArr</span>] <span style="color:#f92672">=</span> <span style="color:#a6e22e">useState</span>&lt;<span style="color:#f92672">objArr</span><span style="color:#960050;background-color:#1e0010">[]</span>&gt;([])
+</code></pre></div><ul>
+<li>key是同一个类型，但是值可以多个类型</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ts" data-lang="ts"><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">dict</span> <span style="color:#f92672">=</span> {
+    [<span style="color:#a6e22e">key</span>: <span style="color:#66d9ef">string</span>]<span style="color:#f92672">:</span> <span style="color:#66d9ef">number</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">string</span>;
+}
+<span style="color:#75715e">// 或者这样
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">dict2</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">Record</span>&lt;<span style="color:#f92672">string</span><span style="color:#960050;background-color:#1e0010">,</span> <span style="color:#a6e22e">number</span> <span style="color:#960050;background-color:#1e0010">|</span> <span style="color:#a6e22e">string</span>&gt;
+
+<span style="color:#75715e">// use
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> [<span style="color:#a6e22e">dict</span>] <span style="color:#f92672">=</span> <span style="color:#a6e22e">useState</span>&lt;<span style="color:#f92672">dict</span>&gt;(
+    {
+        <span style="color:#e6db74">&#34;key&#34;</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">1</span>,
+        <span style="color:#e6db74">&#34;key1&#34;</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;2&#34;</span>,
+    }
+)
+</code></pre></div><ul>
+<li>event</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ts" data-lang="ts"><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">onChange</span> <span style="color:#f92672">=</span> (<span style="color:#a6e22e">event</span>: <span style="color:#66d9ef">React.ChangeEvent</span>&lt;<span style="color:#f92672">HTMLInputElement</span>&gt;) <span style="color:#f92672">=&gt;</span> {}
+&lt;<span style="color:#f92672">input</span> <span style="color:#a6e22e">type</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;text&#34;</span> <span style="color:#a6e22e">onChange</span><span style="color:#f92672">=</span>{<span style="color:#a6e22e">onChange</span>}/&gt;
+
+<span style="color:#66d9ef">const</span> <span style="color:#a6e22e">onClick</span> <span style="color:#f92672">=</span> (<span style="color:#a6e22e">event</span>: <span style="color:#66d9ef">React.MouseEvent</span>&lt;<span style="color:#f92672">HTMLButtonElement</span>&gt;) <span style="color:#f92672">=&gt;</span> {}
+&lt;<span style="color:#f92672">button</span> <span style="color:#a6e22e">onClick</span><span style="color:#f92672">=</span>{<span style="color:#a6e22e">onClick</span>}&gt;<span style="color:#ae81ff">1</span>&lt;/<span style="color:#f92672">button</span>&gt;
+</code></pre></div><ul>
+<li>组件作为参数</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ts" data-lang="ts"><span style="color:#66d9ef">export</span> <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">Basic</span> <span style="color:#f92672">=</span> ({ <span style="color:#a6e22e">children</span> }<span style="color:#f92672">:</span> { <span style="color:#a6e22e">children</span>: <span style="color:#66d9ef">ReactNode</span> }) <span style="color:#f92672">=&gt;</span> {
+    <span style="color:#66d9ef">return</span> &lt;<span style="color:#f92672">div</span>&gt;
+        {<span style="color:#a6e22e">children</span>}
+    &lt;/<span style="color:#f92672">div</span>&gt;
+}
+
+&lt;<span style="color:#f92672">Basic</span>&gt;
+    &lt;<span style="color:#f92672">Title</span> /&gt;
+&lt;/<span style="color:#f92672">Basic</span>&gt;
+</code></pre></div><ul>
+<li>函数组件
+一般来说函数组件是这样写的</li>
+</ul>
+<blockquote>
+<p><code>FC</code>是<code>FunctionComponent</code>的缩写，里面定义默认的<code>props</code></p>
+</blockquote>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ts" data-lang="ts"><span style="color:#66d9ef">export</span> <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">Basic</span>: <span style="color:#66d9ef">React.FC</span><span style="color:#f92672">&lt;</span>{ <span style="color:#a6e22e">children</span>: <span style="color:#66d9ef">ReactNode</span> }<span style="color:#f92672">&gt;</span> <span style="color:#f92672">=</span> ({ <span style="color:#a6e22e">children</span> } ) <span style="color:#f92672">=&gt;</span> {
+    <span style="color:#66d9ef">return</span> &lt;<span style="color:#f92672">div</span>&gt;
+        {<span style="color:#a6e22e">children</span>}
+    &lt;/<span style="color:#f92672">div</span>&gt;
+}
+</code></pre></div><p>但是React18移除FC的隐式的children，我看很多篇博客都说不要推荐使用了</p>
+<p>使用VFC</p>
+<blockquote>
+<p><code>type React.VFC&lt;P = {}&gt; = React.VoidFunctionComponent&lt;P&gt;</code></p>
+<p>@deprecated — - Equivalent with React.FC.</p>
+</blockquote>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#a6e22e">type</span> <span style="color:#a6e22e">FC</span><span style="color:#f92672">&lt;</span><span style="color:#a6e22e">P</span> <span style="color:#f92672">=</span> {}<span style="color:#f92672">&gt;</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">FunctionComponent</span><span style="color:#f92672">&lt;</span><span style="color:#a6e22e">P</span><span style="color:#f92672">&gt;</span>;
+
+<span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">FunctionComponent</span><span style="color:#f92672">&lt;</span><span style="color:#a6e22e">P</span> <span style="color:#f92672">=</span> {}<span style="color:#f92672">&gt;</span> {
+    (<span style="color:#a6e22e">props</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">P</span>, <span style="color:#a6e22e">context</span><span style="color:#f92672">?:</span> <span style="color:#a6e22e">any</span>)<span style="color:#f92672">:</span> <span style="color:#a6e22e">ReactElement</span><span style="color:#f92672">&lt;</span><span style="color:#a6e22e">any</span>, <span style="color:#a6e22e">any</span><span style="color:#f92672">&gt;</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">null</span>;
+    <span style="color:#a6e22e">propTypes</span><span style="color:#f92672">?:</span> <span style="color:#a6e22e">WeakValidationMap</span><span style="color:#f92672">&lt;</span><span style="color:#a6e22e">P</span><span style="color:#f92672">&gt;</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">undefined</span>;
+    <span style="color:#a6e22e">contextTypes</span><span style="color:#f92672">?:</span> <span style="color:#a6e22e">ValidationMap</span><span style="color:#f92672">&lt;</span><span style="color:#a6e22e">any</span><span style="color:#f92672">&gt;</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">undefined</span>;
+    <span style="color:#a6e22e">defaultProps</span><span style="color:#f92672">?:</span> <span style="color:#a6e22e">Partial</span><span style="color:#f92672">&lt;</span><span style="color:#a6e22e">P</span><span style="color:#f92672">&gt;</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">undefined</span>;
+    <span style="color:#a6e22e">displayName</span><span style="color:#f92672">?:</span> <span style="color:#a6e22e">string</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">undefined</span>;
+}
+
+<span style="color:#75715e">/**
+</span><span style="color:#75715e"> * @deprecated - Equivalent with `React.FC`.
+</span><span style="color:#75715e"> */</span>
+<span style="color:#a6e22e">type</span> <span style="color:#a6e22e">VFC</span><span style="color:#f92672">&lt;</span><span style="color:#a6e22e">P</span> <span style="color:#f92672">=</span> {}<span style="color:#f92672">&gt;</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">VoidFunctionComponent</span><span style="color:#f92672">&lt;</span><span style="color:#a6e22e">P</span><span style="color:#f92672">&gt;</span>;
+
+<span style="color:#75715e">/**
+</span><span style="color:#75715e"> * @deprecated - Equivalent with `React.FunctionComponent`.
+</span><span style="color:#75715e"> */</span>
+<span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">VoidFunctionComponent</span><span style="color:#f92672">&lt;</span><span style="color:#a6e22e">P</span> <span style="color:#f92672">=</span> {}<span style="color:#f92672">&gt;</span> {
+    (<span style="color:#a6e22e">props</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">P</span>, <span style="color:#a6e22e">context</span><span style="color:#f92672">?:</span> <span style="color:#a6e22e">any</span>)<span style="color:#f92672">:</span> <span style="color:#a6e22e">ReactElement</span><span style="color:#f92672">&lt;</span><span style="color:#a6e22e">any</span>, <span style="color:#a6e22e">any</span><span style="color:#f92672">&gt;</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">null</span>;
+    <span style="color:#a6e22e">propTypes</span><span style="color:#f92672">?:</span> <span style="color:#a6e22e">WeakValidationMap</span><span style="color:#f92672">&lt;</span><span style="color:#a6e22e">P</span><span style="color:#f92672">&gt;</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">undefined</span>;
+    <span style="color:#a6e22e">contextTypes</span><span style="color:#f92672">?:</span> <span style="color:#a6e22e">ValidationMap</span><span style="color:#f92672">&lt;</span><span style="color:#a6e22e">any</span><span style="color:#f92672">&gt;</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">undefined</span>;
+    <span style="color:#a6e22e">defaultProps</span><span style="color:#f92672">?:</span> <span style="color:#a6e22e">Partial</span><span style="color:#f92672">&lt;</span><span style="color:#a6e22e">P</span><span style="color:#f92672">&gt;</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">undefined</span>;
+    <span style="color:#a6e22e">displayName</span><span style="color:#f92672">?:</span> <span style="color:#a6e22e">string</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">undefined</span>;
+}
+</code></pre></div><p><a href="https://www.mydatahack.com/using-react-vfc-instead-of-react-fc/">https://www.mydatahack.com/using-react-vfc-instead-of-react-fc/</a></p>
+<p><a href="https://fettblog.eu/typescript-react-why-i-dont-use-react-fc/">https://fettblog.eu/typescript-react-why-i-dont-use-react-fc/</a></p>
+<h2 id="hooks">hooks</h2>
+<ul>
+<li>as</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ts" data-lang="ts"><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">TUser</span> <span style="color:#f92672">=</span> {
+    <span style="color:#a6e22e">name</span>: <span style="color:#66d9ef">string</span>,
+    <span style="color:#a6e22e">age</span>: <span style="color:#66d9ef">number</span>
+}
+<span style="color:#75715e">// Argument of type &#39;{}&#39; is not assignable to parameter of type &#39;TUser | (() =&gt; TUser)&#39;.
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> [<span style="color:#a6e22e">user</span>, <span style="color:#a6e22e">setUser</span>] <span style="color:#f92672">=</span> <span style="color:#a6e22e">useState</span>&lt;<span style="color:#f92672">TUser</span>&gt;({})
+<span style="color:#75715e">// as
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> [<span style="color:#a6e22e">user</span>, <span style="color:#a6e22e">setUser</span>] <span style="color:#f92672">=</span> <span style="color:#a6e22e">useState</span>&lt;<span style="color:#f92672">TUser</span>&gt;({} <span style="color:#66d9ef">as</span> <span style="color:#a6e22e">TUser</span>)
+</code></pre></div><h3 id="usereducer">useReducer</h3>
+<p>reducer的类型</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ts" data-lang="ts"><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">initialState</span> <span style="color:#f92672">=</span> { <span style="color:#a6e22e">count</span>: <span style="color:#66d9ef">0</span> };
+
+<span style="color:#66d9ef">type</span> <span style="color:#a6e22e">ACTIONTYPE</span> <span style="color:#f92672">=</span>
+  <span style="color:#f92672">|</span> { <span style="color:#66d9ef">type</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;increment&#34;</span>; <span style="color:#a6e22e">payload</span>: <span style="color:#66d9ef">number</span> }
+  <span style="color:#f92672">|</span> { <span style="color:#66d9ef">type</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;decrement&#34;</span>; <span style="color:#a6e22e">payload</span>: <span style="color:#66d9ef">string</span> };
+
+<span style="color:#66d9ef">function</span> <span style="color:#a6e22e">reducer</span>(<span style="color:#a6e22e">state</span>: <span style="color:#66d9ef">typeof</span> <span style="color:#a6e22e">initialState</span>, <span style="color:#a6e22e">action</span>: <span style="color:#66d9ef">ACTIONTYPE</span>) {
+  <span style="color:#66d9ef">switch</span> (<span style="color:#a6e22e">action</span>.<span style="color:#66d9ef">type</span>) {
+    <span style="color:#66d9ef">case</span> <span style="color:#e6db74">&#34;increment&#34;</span><span style="color:#f92672">:</span>
+      <span style="color:#66d9ef">return</span> { <span style="color:#a6e22e">count</span>: <span style="color:#66d9ef">state.count</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">action</span>.<span style="color:#a6e22e">payload</span> };
+    <span style="color:#66d9ef">case</span> <span style="color:#e6db74">&#34;decrement&#34;</span><span style="color:#f92672">:</span>
+      <span style="color:#66d9ef">return</span> { <span style="color:#a6e22e">count</span>: <span style="color:#66d9ef">state.count</span> <span style="color:#f92672">-</span> Number(<span style="color:#a6e22e">action</span>.<span style="color:#a6e22e">payload</span>) };
+    <span style="color:#66d9ef">default</span><span style="color:#f92672">:</span>
+      <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> Error();
+  }
+}
+
+<span style="color:#66d9ef">function</span> <span style="color:#a6e22e">Counter() {</span>
+  <span style="color:#66d9ef">const</span> [<span style="color:#a6e22e">state</span>, <span style="color:#a6e22e">dispatch</span>] <span style="color:#f92672">=</span> <span style="color:#a6e22e">React</span>.<span style="color:#a6e22e">useReducer</span>(<span style="color:#a6e22e">reducer</span>, <span style="color:#a6e22e">initialState</span>);
+  <span style="color:#66d9ef">return</span> (
+    &lt;&gt;
+      <span style="color:#a6e22e">Count</span><span style="color:#f92672">:</span> {<span style="color:#a6e22e">state</span>.<span style="color:#a6e22e">count</span>}
+      &lt;<span style="color:#f92672">button</span> <span style="color:#a6e22e">onClick</span><span style="color:#f92672">=</span>{() <span style="color:#f92672">=&gt;</span> <span style="color:#a6e22e">dispatch</span>({ <span style="color:#66d9ef">type</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;decrement&#34;</span>, <span style="color:#a6e22e">payload</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;5&#34;</span> })}&gt;
+        <span style="color:#f92672">-</span>
+      &lt;/<span style="color:#f92672">button</span>&gt;
+      &lt;<span style="color:#f92672">button</span> <span style="color:#a6e22e">onClick</span><span style="color:#f92672">=</span>{() <span style="color:#f92672">=&gt;</span> <span style="color:#a6e22e">dispatch</span>({ <span style="color:#66d9ef">type</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;increment&#34;</span>, <span style="color:#a6e22e">payload</span>: <span style="color:#66d9ef">5</span> })}&gt;
+        <span style="color:#f92672">+</span>
+      &lt;/<span style="color:#f92672">button</span>&gt;
+    &lt;/&gt;
+  );
+}
+</code></pre></div><h3 id="ref">ref</h3>
+<ul>
+<li>使用ref来获取dom节点</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ts" data-lang="ts"><span style="color:#75715e">// 获取div
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">divRef</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">useRef</span>&lt;<span style="color:#f92672">HTMLDivElement</span>&gt;(<span style="color:#66d9ef">null</span>);
+
+<span style="color:#75715e">// 这里要注意获取input的时候要用HTMLInputElement
+</span></code></pre></div><h2 id="custom-hooks">Custom Hooks</h2>
+<p>自定义hooks
+这里如果你要自定义一个hooks，返回的的是一个数组的时候应该使用断言<code>as const</code></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ts" data-lang="ts"><span style="color:#66d9ef">export</span> <span style="color:#66d9ef">function</span> <span style="color:#a6e22e">useLoading() {</span>
+  <span style="color:#66d9ef">const</span> [<span style="color:#a6e22e">isLoading</span>, <span style="color:#a6e22e">setState</span>] <span style="color:#f92672">=</span> <span style="color:#a6e22e">useState</span>(<span style="color:#66d9ef">false</span>);
+  <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">load</span> <span style="color:#f92672">=</span> (<span style="color:#a6e22e">aPromise</span>: <span style="color:#66d9ef">Promise</span>&lt;<span style="color:#f92672">any</span>&gt;) <span style="color:#f92672">=&gt;</span> {
+    <span style="color:#a6e22e">setState</span>(<span style="color:#66d9ef">true</span>);
+    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">aPromise</span>.<span style="color:#66d9ef">finally</span>(() <span style="color:#f92672">=&gt;</span> <span style="color:#a6e22e">setState</span>(<span style="color:#66d9ef">false</span>));
+  };
+  <span style="color:#66d9ef">return</span> [<span style="color:#a6e22e">isLoading</span>, <span style="color:#a6e22e">load</span>] <span style="color:#66d9ef">as</span> <span style="color:#66d9ef">const</span>;
+}
+<span style="color:#75715e">// 不使用 as const 的类型
+</span><span style="color:#75715e">// const isLoading: boolean | ((aPromise: Promise&lt;any&gt;) =&gt; Promise&lt;any&gt;)
+</span><span style="color:#75715e">// const load: boolean | ((aPromise: Promise&lt;any&gt;) =&gt; Promise&lt;any&gt;)
+</span><span style="color:#75715e"></span>
+<span style="color:#75715e">// 使用后的类型
+</span><span style="color:#75715e">// const isLoading: boolean
+</span><span style="color:#75715e">// const load: (aPromise: Promise&lt;any&gt;) =&gt; Promise&lt;any&gt;
+</span></code></pre></div><p>当然你也可以自定义<code>return</code>的类型</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ts" data-lang="ts"><span style="color:#66d9ef">return</span> [<span style="color:#a6e22e">isLoading</span>, <span style="color:#a6e22e">load</span>] <span style="color:#66d9ef">as</span> [
+  <span style="color:#66d9ef">boolean</span>,
+  (<span style="color:#a6e22e">aPromise</span>: <span style="color:#66d9ef">Promise</span>&lt;<span style="color:#f92672">any</span>&gt;) <span style="color:#f92672">=&gt;</span> <span style="color:#a6e22e">Promise</span>&lt;<span style="color:#f92672">any</span>&gt;
+];
+</code></pre></div><h2 id="class-components">Class Components</h2>
+<p>一个简单的class组件</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ts" data-lang="ts"><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">TProps</span> <span style="color:#f92672">=</span> {
+    <span style="color:#a6e22e">message</span>: <span style="color:#66d9ef">string</span>
+}
+<span style="color:#66d9ef">type</span> <span style="color:#a6e22e">TState</span> <span style="color:#f92672">=</span> {
+    <span style="color:#a6e22e">name</span>: <span style="color:#66d9ef">string</span>
+    <span style="color:#a6e22e">age</span>: <span style="color:#66d9ef">number</span>
+}
+
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">App</span> <span style="color:#66d9ef">extends</span> <span style="color:#a6e22e">Component</span>&lt;<span style="color:#f92672">TProps</span><span style="color:#960050;background-color:#1e0010">,</span> <span style="color:#a6e22e">TState</span>&gt; {
+    <span style="color:#a6e22e">state</span>: <span style="color:#66d9ef">TState</span> <span style="color:#f92672">=</span> {
+        <span style="color:#a6e22e">name</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;name&#39;</span>,
+        <span style="color:#a6e22e">age</span>: <span style="color:#66d9ef">17</span>
+    }
+
+    <span style="color:#a6e22e">changeAge</span> <span style="color:#f92672">=</span> (<span style="color:#a6e22e">amount</span>: <span style="color:#66d9ef">number</span>) <span style="color:#f92672">=&gt;</span> {
+      <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">setState</span>(<span style="color:#a6e22e">state</span> <span style="color:#f92672">=&gt;</span> ({
+        <span style="color:#a6e22e">age</span>: <span style="color:#66d9ef">state.age</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">amount</span>
+      }))
+    }
+
+    <span style="color:#a6e22e">render() {</span>
+        <span style="color:#66d9ef">return</span>(
+            &lt;<span style="color:#f92672">div</span>&gt;
+              {<span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">props</span>.<span style="color:#a6e22e">message</span>} {<span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">state</span>.<span style="color:#a6e22e">age</span>}
+              &lt;<span style="color:#f92672">button</span> <span style="color:#a6e22e">onClick</span><span style="color:#f92672">=</span>{() <span style="color:#f92672">=&gt;</span> <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">changeAge</span>(<span style="color:#ae81ff">1</span>)}&gt;<span style="color:#f92672">+</span>&lt;/<span style="color:#f92672">button</span>&gt;
+            &lt;/<span style="color:#f92672">div</span>&gt;
+        )
+    }
+}
+
+<span style="color:#75715e">// 当然你也可以这样
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">export</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">App</span> <span style="color:#66d9ef">extends</span> <span style="color:#a6e22e">Component</span><span style="color:#f92672">&lt;</span>{
+  <span style="color:#a6e22e">message</span>: <span style="color:#66d9ef">string</span>
+}<span style="color:#f92672">&gt;</span> {
+  <span style="color:#a6e22e">age</span>: <span style="color:#66d9ef">number</span>
+  <span style="color:#a6e22e">changeAge() {</span>
+    <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">age</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">18</span>
+  }
+  <span style="color:#a6e22e">render() {</span>
+    <span style="color:#66d9ef">return</span>(
+      &lt;<span style="color:#f92672">div</span>&gt;
+        {<span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">props</span>.<span style="color:#a6e22e">message</span>} {<span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">age</span>}
+      &lt;/<span style="color:#f92672">div</span>&gt;
+    )
+  }
+}
+</code></pre></div><h2 id="参考">参考</h2>
+<hr>
+<ol>
+<li><a href="https://react-typescript-cheatsheet.netlify.app/">react-typescript-cheatsheet</a></li>
+</ol>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container has-text-centered">
+    <p>&copy; <a href="https://github.com/pastSeagull">Gaviota</a> 2016</p>
+  </div>
+</section>
+
+
+
+
+
+
+
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+
+
+
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+
+

@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>webpack的学习和配置 | Gaviota</title>
+<link rel="stylesheet" href="https://pastSeagull.github.io/blog//css/style.css">
+
+
+
+<link href="https://cdn.bootcss.com/highlight.js/9.12.0/styles/monokai.min.css" rel="stylesheet">
+
+
+
+
+
+<section class="section">
+  <div class="container">
+    <nav class="nav">
+      <div class="nav-left">
+        <a class="nav-item" href="https://pastSeagull.github.io/blog/"><h1 class="title is-4">Gaviota</h1></a>
+      </div>
+      <div class="nav-right">
+        <nav class="nav-item level is-mobile">
+          
+          <a class="level-item" href="https://github.com/pastSeagull">
+            <span class="icon">
+              <i class="fa fa-github"></i>
+            </span>
+          </a>
+          
+          <a class="level-item" href="https://twitter.com/pastSeagull">
+            <span class="icon">
+              <i class="fa fa-twitter"></i>
+            </span>
+          </a>
+          
+          <a class="level-item" href="/index.xml">
+            <span class="icon">
+              <i class="fa fa-rss"></i>
+            </span>
+          </a>
+          
+        </nav>
+      </div>
+    </nav>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <h2 class="subtitle is-6">January 1, 0001</h2>
+    <h1 class="title">webpack的学习和配置</h1>
+    <div class="content">
+      <p>webpack 学习过程中的一些笔记</p>
+<h1 id="入口entry和出口output">入口(entry)和出口(output)</h1>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">path</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">require</span>(<span style="color:#e6db74">&#34;path&#34;</span>);
+
+<span style="color:#a6e22e">module</span>.<span style="color:#a6e22e">exports</span> <span style="color:#f92672">=</span> {
+  <span style="color:#a6e22e">entry</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;./src/app.js&#34;</span>, <span style="color:#75715e">// 入口
+</span><span style="color:#75715e"></span>  <span style="color:#a6e22e">output</span><span style="color:#f92672">:</span> {
+    <span style="color:#a6e22e">path</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">path</span>.<span style="color:#a6e22e">resolve</span>(<span style="color:#ae81ff">__</span><span style="color:#a6e22e">dirname</span>, <span style="color:#e6db74">&#34;dist&#34;</span>), <span style="color:#75715e">// 出口
+</span><span style="color:#75715e"></span>    <span style="color:#a6e22e">filename</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;my-first-webpack.bundle.js&#34;</span>,
+  },
+};
+</code></pre></div><h1 id="loader">loader</h1>
+<p>对于模块的源代码进行转换</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#a6e22e">module</span>.<span style="color:#a6e22e">exports</span> <span style="color:#f92672">=</span> {
+  <span style="color:#a6e22e">module</span><span style="color:#f92672">:</span> {
+    <span style="color:#a6e22e">rules</span><span style="color:#f92672">:</span> [
+      { <span style="color:#a6e22e">test</span><span style="color:#f92672">:</span> <span style="color:#e6db74">/\.css$/</span>, <span style="color:#a6e22e">use</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;css-loader&#34;</span>, <span style="color:#a6e22e">exclude</span><span style="color:#f92672">:</span> <span style="color:#e6db74">/node_modules/</span> },
+      { <span style="color:#a6e22e">test</span><span style="color:#f92672">:</span> <span style="color:#e6db74">/\.ts$/</span>, <span style="color:#a6e22e">use</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;ts-loader&#34;</span>, <span style="color:#a6e22e">exclude</span><span style="color:#f92672">:</span> <span style="color:#e6db74">/node_modules/</span> },
+    ],
+  },
+};
+</code></pre></div><h1 id="插件plugins">插件(plugins)</h1>
+<p>在 webpack 的构建中使用插件来达到你想要的构建结果，主要是解决 loader 无法实现的事情。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#a6e22e">plugins</span><span style="color:#f92672">:</span> [
+  <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">webpack</span>.<span style="color:#a6e22e">optimize</span>.<span style="color:#a6e22e">UglifyJsPlugin</span>(),
+  <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">HtmlWebpackPlugin</span>({ <span style="color:#a6e22e">template</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;./src/index.html&#34;</span> }),
+];
+</code></pre></div><h1 id="区分开发环境和生产环境">区分开发环境和生产环境</h1>
+<p><code>yarn add webpack-merge -D</code></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#66d9ef">const</span> { <span style="color:#a6e22e">merge</span> } <span style="color:#f92672">=</span> <span style="color:#a6e22e">require</span>(<span style="color:#e6db74">&#34;webpack-merge&#34;</span>);
+<span style="color:#66d9ef">const</span> <span style="color:#a6e22e">common</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">require</span>(<span style="color:#e6db74">&#34;./webpack.common.js&#34;</span>);
+
+<span style="color:#a6e22e">module</span>.<span style="color:#a6e22e">exports</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">merge</span>(<span style="color:#a6e22e">common</span>, {
+  <span style="color:#a6e22e">mode</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;development&#34;</span>, <span style="color:#75715e">// 开发环境。 production 生产环境
+</span><span style="color:#75715e"></span>});
+</code></pre></div><p>可以设置个环境变量来区分不同的环境，使用 cross-env。<code>yarn add cross-env -D</code></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">isDev</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">process</span>.<span style="color:#a6e22e">env</span>.<span style="color:#a6e22e">NODE_ENV</span> <span style="color:#f92672">!==</span> <span style="color:#e6db74">&#39;production&#39;</span>
+
+<span style="color:#75715e">// output设置
+</span><span style="color:#75715e"></span><span style="color:#a6e22e">filename</span><span style="color:#f92672">:</span> <span style="color:#e6db74">`js/[name]</span><span style="color:#e6db74">${</span><span style="color:#a6e22e">isDev</span> <span style="color:#f92672">?</span> <span style="color:#e6db74">&#39;&#39;</span> <span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;.[hash:8]&#39;</span><span style="color:#e6db74">}</span><span style="color:#e6db74">.js`</span>,
+
+<span style="color:#75715e">// package.json ，scripts。设置开发环境或者生产环境
+</span><span style="color:#75715e"></span><span style="color:#a6e22e">cross</span><span style="color:#f92672">-</span><span style="color:#a6e22e">env</span> <span style="color:#a6e22e">NODE_ENV</span><span style="color:#f92672">=</span><span style="color:#a6e22e">production</span> <span style="color:#a6e22e">webpack</span> <span style="color:#f92672">--</span><span style="color:#a6e22e">config</span>
+<span style="color:#a6e22e">cross</span><span style="color:#f92672">-</span><span style="color:#a6e22e">env</span> <span style="color:#a6e22e">NODE_ENV</span><span style="color:#f92672">=</span><span style="color:#a6e22e">development</span> <span style="color:#a6e22e">webpack</span> <span style="color:#f92672">--</span><span style="color:#a6e22e">config</span>
+</code></pre></div><h1 id="模块热替换">模块热替换</h1>
+<p>借助 webpack-dev-server 和 html-webpack-plugin。<code>yarn add webpack-dev-server html-webpack-plugin -D</code></p>
+<p><code>html-webpack-plugin</code>把打包的 js 文件自动引入 html 里面
+<code>webpack-dev-server</code>本地的 http 服务</p>
+<p>报了个错误，查了一下是 webpack 和 webpack-dev-server 版本不不兼容导致的报错
+<img src="./../images/webpack.png" alt="错误">
+&ldquo;webpack&rdquo;: &ldquo;^5.15.0&rdquo;,
+&ldquo;webpack-cli&rdquo;: &ldquo;^4.3.1&rdquo;
+&ldquo;webpack-dev-server&rdquo;: &ldquo;^3.11.2&rdquo;,</p>
+<p>换版本 ok，<a href="https://stackoverflow.com/questions/59611597/error-cannot-find-module-webpack-cli-bin-config-yargs">stack overflow</a>
+&ldquo;webpack&rdquo;: &ldquo;4.32.2&rdquo;,
+&ldquo;webpack-cli&rdquo;: &ldquo;3.3.0&rdquo;,
+&ldquo;webpack-dev-server&rdquo;: &ldquo;3.11.0&rdquo;,</p>
+<h1 id="devtool">devtool</h1>
+<p>调试错误代码</p>
+<h1 id="clean-webpack-plugin">clean-webpack-plugin</h1>
+<p>每次打包前都清除之前打包的目录<code>yarn add clean-webpack-plugin -D</code></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#66d9ef">const</span> { <span style="color:#a6e22e">CleanWebpackPlugin</span> } <span style="color:#f92672">=</span> <span style="color:#a6e22e">require</span>(<span style="color:#e6db74">&#39;clean-webpack-plugin&#39;</span>)
+
+<span style="color:#a6e22e">plugins</span><span style="color:#f92672">:</span> [
+    <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">CleanWebpackPlugin</span>(),
+  ],
+</code></pre></div><h1 id="css-处理">css 处理</h1>
+<p>使用<code>style-loader</code>和<code>css-loader</code> <code>yarn add style-loader css-loader -D</code></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#a6e22e">module</span><span style="color:#f92672">:</span> {
+  <span style="color:#a6e22e">rules</span><span style="color:#f92672">:</span> [
+    {
+      <span style="color:#a6e22e">test</span><span style="color:#f92672">:</span> <span style="color:#e6db74">/\.css$/</span>,
+      <span style="color:#a6e22e">use</span><span style="color:#f92672">:</span> [
+        <span style="color:#e6db74">&#34;style-loader&#34;</span>,
+        {
+          <span style="color:#a6e22e">loader</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;css-loader&#34;</span>,
+          <span style="color:#a6e22e">options</span><span style="color:#f92672">:</span> {
+            <span style="color:#a6e22e">modules</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">false</span>, <span style="color:#75715e">// 默认就是 false, 若要开启，可在官网具体查看可配置项
+</span><span style="color:#75715e"></span>            <span style="color:#a6e22e">sourceMap</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">isDev</span>, <span style="color:#75715e">// 开启后与 devtool 设置一致, 开发环境开启，生产环境关闭
+</span><span style="color:#75715e"></span>            <span style="color:#a6e22e">importLoaders</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">0</span>, <span style="color:#75715e">// 指定在 CSS loader 处理前使用的 laoder 数量
+</span><span style="color:#75715e"></span>          },
+        },
+      ],
+    },
+  ];
+}
+</code></pre></div><ul>
+<li>sass
+需要<code>node-sass</code>和<code>sass-loader</code> <code>yarn add node-sass sass-loader -D</code></li>
+</ul>
+<h1 id="postcss">PostCSS</h1>
+<p>对 css 的处理 <code>yarn add postcss-loader postcss-flexbugs-fixes postcss-preset-env autoprefixer postcss-normalize -D</code></p>
+<blockquote>
+<p>postcss-flexbugs-fixes 修复 flex 布局的<br>
+postcss-preset-env 兼容<br>
+postcss-normalize 从 browserslist 导入需要的 Normalize.css， 它是 CSS reset 的代替方案</p>
+</blockquote>
+<p>把公共逻辑抽取出来，放到 webpack.common.js 文件中</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">getCssLoaders</span> <span style="color:#f92672">=</span> (<span style="color:#a6e22e">importLoaders</span>) =&gt; [
+  <span style="color:#e6db74">&#34;style-loader&#34;</span>,
+  {
+    <span style="color:#a6e22e">loader</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;css-loader&#34;</span>,
+    <span style="color:#a6e22e">options</span><span style="color:#f92672">:</span> {
+      <span style="color:#a6e22e">modules</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">false</span>,
+      <span style="color:#a6e22e">sourceMap</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">isDev</span>,
+      <span style="color:#a6e22e">importLoaders</span>,
+    },
+  },
+  {
+    <span style="color:#a6e22e">loader</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;postcss-loader&#34;</span>,
+    <span style="color:#a6e22e">options</span><span style="color:#f92672">:</span> {
+      <span style="color:#a6e22e">ident</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;postcss&#34;</span>,
+      <span style="color:#a6e22e">plugins</span><span style="color:#f92672">:</span> [
+        <span style="color:#75715e">// 修复一些和 flex 布局相关的 bug
+</span><span style="color:#75715e"></span>        <span style="color:#a6e22e">require</span>(<span style="color:#e6db74">&#34;postcss-flexbugs-fixes&#34;</span>),
+        <span style="color:#a6e22e">require</span>(<span style="color:#e6db74">&#34;postcss-preset-env&#34;</span>)({
+          <span style="color:#a6e22e">autoprefixer</span><span style="color:#f92672">:</span> {
+            <span style="color:#a6e22e">grid</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">true</span>,
+            <span style="color:#a6e22e">flexbox</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;no-2009&#34;</span>,
+          },
+          <span style="color:#a6e22e">stage</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">3</span>,
+        }),
+        <span style="color:#a6e22e">require</span>(<span style="color:#e6db74">&#34;postcss-normalize&#34;</span>),
+      ],
+      <span style="color:#a6e22e">sourceMap</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">isDev</span>,
+    },
+  },
+];
+</code></pre></div><p>这里有报了个错误，就是最新版的更改了一些 api，所以写法就不一样了。降版本。
+原先的版本
+&ldquo;postcss-flexbugs-fixes&rdquo;: &ldquo;^5.0.2&rdquo;,
+&ldquo;postcss-loader&rdquo;: &ldquo;^4.1.0&rdquo;,
+&ldquo;postcss-normalize&rdquo;: &ldquo;^9.0.0&rdquo;,
+&ldquo;postcss-preset-env&rdquo;: &ldquo;^6.7.0&rdquo;,</p>
+<p>修改后
+&ldquo;postcss-flexbugs-fixes&rdquo;: &ldquo;^4.2.1&rdquo;,
+&ldquo;postcss-loader&rdquo;: &ldquo;^3.0.0&rdquo;,
+&ldquo;postcss-normalize&rdquo;: &ldquo;^9.0.0&rdquo;,
+&ldquo;postcss-preset-env&rdquo;: &ldquo;^6.7.0&rdquo;,</p>
+<p>最后在 package.js 指定浏览器的范围</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json">{
+  <span style="color:#f92672">&#34;browserslist&#34;</span>: [<span style="color:#e6db74">&#34;&gt;0.2%&#34;</span>, <span style="color:#e6db74">&#34;not dead&#34;</span>, <span style="color:#e6db74">&#34;ie &gt;= 9&#34;</span>, <span style="color:#e6db74">&#34;not op_mini all&#34;</span>]
+}
+</code></pre></div><p>然后就已经能使用 PostCSS 了。</p>
+<h1 id="图片和字体文件">图片和字体文件</h1>
+<p>使用<code>file-loader</code>和<code>url-loader</code> <code>yarn add file-loader url-loader -D</code>
+在 webpack.common.js 中添加</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js">{
+        <span style="color:#a6e22e">test</span><span style="color:#f92672">:</span> [<span style="color:#e6db74">/\.bmp$/</span>, <span style="color:#e6db74">/\.gif$/</span>, <span style="color:#e6db74">/\.jpe?g$/</span>, <span style="color:#e6db74">/\.png$/</span>],
+        <span style="color:#a6e22e">use</span><span style="color:#f92672">:</span> [
+          {
+            <span style="color:#a6e22e">loader</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;url-loader&#39;</span>,
+            <span style="color:#a6e22e">options</span><span style="color:#f92672">:</span> {
+              <span style="color:#a6e22e">limit</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">10</span> <span style="color:#f92672">*</span> <span style="color:#ae81ff">1024</span>,
+              <span style="color:#a6e22e">name</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;[name].[contenthash:8].[ext]&#39;</span>,
+              <span style="color:#a6e22e">outputPath</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;assets/images&#39;</span>,
+            },
+          },
+        ],
+      },
+      {
+        <span style="color:#a6e22e">test</span><span style="color:#f92672">:</span> <span style="color:#e6db74">/\.(ttf|woff|woff2|eot|otf)$/</span>,
+        <span style="color:#a6e22e">use</span><span style="color:#f92672">:</span> [
+          {
+            <span style="color:#a6e22e">loader</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;url-loader&#39;</span>,
+            <span style="color:#a6e22e">options</span><span style="color:#f92672">:</span> {
+              <span style="color:#a6e22e">name</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;[name].[contenthash:8].[ext]&#39;</span>,
+              <span style="color:#a6e22e">outputPath</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;assets/fonts&#39;</span>,
+            },
+          },
+        ],
+      },
+</code></pre></div><p>但是在 ts 中引入图片会报错
+在<code>src</code>中新建文件<code>typings/file.d.ts</code></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ts" data-lang="ts"><span style="color:#66d9ef">declare</span> <span style="color:#a6e22e">module</span> <span style="color:#e6db74">&#34;*.svg&#34;</span> {
+  <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">path</span>: <span style="color:#66d9ef">string</span>;
+  <span style="color:#66d9ef">export</span> <span style="color:#66d9ef">default</span> <span style="color:#a6e22e">path</span>;
+}
+
+<span style="color:#66d9ef">declare</span> <span style="color:#a6e22e">module</span> <span style="color:#e6db74">&#34;*.bmp&#34;</span> {
+  <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">path</span>: <span style="color:#66d9ef">string</span>;
+  <span style="color:#66d9ef">export</span> <span style="color:#66d9ef">default</span> <span style="color:#a6e22e">path</span>;
+}
+
+<span style="color:#66d9ef">declare</span> <span style="color:#a6e22e">module</span> <span style="color:#e6db74">&#34;*.gif&#34;</span> {
+  <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">path</span>: <span style="color:#66d9ef">string</span>;
+  <span style="color:#66d9ef">export</span> <span style="color:#66d9ef">default</span> <span style="color:#a6e22e">path</span>;
+}
+
+<span style="color:#66d9ef">declare</span> <span style="color:#a6e22e">module</span> <span style="color:#e6db74">&#34;*.jpg&#34;</span> {
+  <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">path</span>: <span style="color:#66d9ef">string</span>;
+  <span style="color:#66d9ef">export</span> <span style="color:#66d9ef">default</span> <span style="color:#a6e22e">path</span>;
+}
+
+<span style="color:#66d9ef">declare</span> <span style="color:#a6e22e">module</span> <span style="color:#e6db74">&#34;*.jpeg&#34;</span> {
+  <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">path</span>: <span style="color:#66d9ef">string</span>;
+  <span style="color:#66d9ef">export</span> <span style="color:#66d9ef">default</span> <span style="color:#a6e22e">path</span>;
+}
+
+<span style="color:#66d9ef">declare</span> <span style="color:#a6e22e">module</span> <span style="color:#e6db74">&#34;*.png&#34;</span> {
+  <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">path</span>: <span style="color:#66d9ef">string</span>;
+  <span style="color:#66d9ef">export</span> <span style="color:#66d9ef">default</span> <span style="color:#a6e22e">path</span>;
+}
+</code></pre></div><p>webpack的配置差不多先到这里了</p>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container has-text-centered">
+    <p>&copy; <a href="https://github.com/pastSeagull">Gaviota</a> 2016</p>
+  </div>
+</section>
+
+
+
+
+
+
+
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+
+
+
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+
+

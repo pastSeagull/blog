@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>关于vue3的一些封装 | Gaviota</title>
+<link rel="stylesheet" href="https://pastSeagull.github.io/blog//css/style.css">
+
+
+
+<link href="https://cdn.bootcss.com/highlight.js/9.12.0/styles/monokai.min.css" rel="stylesheet">
+
+
+
+
+
+<section class="section">
+  <div class="container">
+    <nav class="nav">
+      <div class="nav-left">
+        <a class="nav-item" href="https://pastSeagull.github.io/blog/"><h1 class="title is-4">Gaviota</h1></a>
+      </div>
+      <div class="nav-right">
+        <nav class="nav-item level is-mobile">
+          
+          <a class="level-item" href="https://github.com/pastSeagull">
+            <span class="icon">
+              <i class="fa fa-github"></i>
+            </span>
+          </a>
+          
+          <a class="level-item" href="https://twitter.com/pastSeagull">
+            <span class="icon">
+              <i class="fa fa-twitter"></i>
+            </span>
+          </a>
+          
+          <a class="level-item" href="/index.xml">
+            <span class="icon">
+              <i class="fa fa-rss"></i>
+            </span>
+          </a>
+          
+        </nav>
+      </div>
+    </nav>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <h2 class="subtitle is-6">April 17, 2022</h2>
+    <h1 class="title">关于vue3的一些封装</h1>
+    <div class="content">
+      <p>一个不优雅并且没啥用的封装处理。不看省掉几分钟的时间。</p>
+<hr>
+<p>2022.8.9更新
+发现我之前的栗子太蠢了，写<code>nuxt3</code>的时候简单的用了一下<code>hook</code>,虽然下面这个栗子也比较蠢。
+应该还能分得更细致一些。基本都是一个业务/一组功能放一个hook，import进来暴露就完事了，
+然后一个文件夹就<code>usexxx * n</code>,<code>index.vue * 1</code>
+不过vue3用<code>Composition API</code>还是以前的<code>Options API</code>思维的话,还不如写vue2的写法。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ts" data-lang="ts"><span style="color:#75715e">// api.ts
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">export</span> <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">fetchTest</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">async</span> (<span style="color:#a6e22e">tab</span>) <span style="color:#f92672">=&gt;</span> {
+    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">$fetch</span>(<span style="color:#e6db74">`https://cnodejs.org/api/v1/topics?tab=</span><span style="color:#e6db74">${</span><span style="color:#a6e22e">tab</span><span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>)
+}
+
+<span style="color:#75715e">// utils.ts
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">export</span> <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">useAsync</span> <span style="color:#f92672">=</span> () <span style="color:#f92672">=&gt;</span> {
+    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">loading</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">ref</span>(<span style="color:#66d9ef">false</span>)
+    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">data</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">ref</span>(<span style="color:#66d9ef">null</span>)
+    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">error</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">ref</span>(<span style="color:#66d9ef">null</span>)
+    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">request</span> <span style="color:#f92672">=</span> (<span style="color:#a6e22e">promise</span>) <span style="color:#f92672">=&gt;</span> {
+        <span style="color:#66d9ef">if</span> (<span style="color:#f92672">!</span><span style="color:#a6e22e">promise</span> <span style="color:#f92672">||</span> <span style="color:#f92672">!</span><span style="color:#a6e22e">promise</span>.<span style="color:#a6e22e">then</span>) {
+            <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> Error(<span style="color:#e6db74">&#34;请传入promise&#34;</span>)
+        }
+        <span style="color:#a6e22e">loading</span>.<span style="color:#a6e22e">value</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">true</span>
+        <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">promise</span>.<span style="color:#a6e22e">then</span>(<span style="color:#a6e22e">res</span> <span style="color:#f92672">=&gt;</span> {
+            <span style="color:#a6e22e">data</span>.<span style="color:#a6e22e">value</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">res</span>.<span style="color:#a6e22e">data</span>
+        }).<span style="color:#66d9ef">catch</span>(<span style="color:#a6e22e">e</span> <span style="color:#f92672">=&gt;</span> {
+            <span style="color:#a6e22e">error</span>.<span style="color:#a6e22e">value</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">e</span>
+        }).<span style="color:#66d9ef">finally</span>(() <span style="color:#f92672">=&gt;</span> {
+            <span style="color:#a6e22e">loading</span>.<span style="color:#a6e22e">value</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">false</span>
+        })
+    }
+    <span style="color:#66d9ef">return</span> {
+        <span style="color:#a6e22e">loading</span>,
+        <span style="color:#a6e22e">error</span>,
+        <span style="color:#a6e22e">data</span>,
+        <span style="color:#a6e22e">request</span>
+    }
+}
+<span style="color:#75715e">// item.ts
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">export</span> <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">useItem</span> <span style="color:#f92672">=</span> (<span style="color:#a6e22e">promise</span>) <span style="color:#f92672">=&gt;</span> {
+    <span style="color:#66d9ef">const</span> { <span style="color:#a6e22e">loading</span>, <span style="color:#a6e22e">error</span>, <span style="color:#a6e22e">data</span>, <span style="color:#a6e22e">request</span>} <span style="color:#f92672">=</span> <span style="color:#a6e22e">useAsync</span>()
+    <span style="color:#a6e22e">onMounted</span>(() <span style="color:#f92672">=&gt;</span> <span style="color:#a6e22e">request</span>(<span style="color:#a6e22e">promise</span>))
+    <span style="color:#66d9ef">return</span> {
+        <span style="color:#a6e22e">loading</span>,
+        <span style="color:#a6e22e">error</span>,
+        <span style="color:#a6e22e">data</span>,
+        <span style="color:#a6e22e">request</span>
+    }
+}
+<span style="color:#75715e">// 使用
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> { <span style="color:#a6e22e">loading</span>, <span style="color:#a6e22e">error</span>, <span style="color:#a6e22e">data</span>, <span style="color:#a6e22e">request</span> } <span style="color:#f92672">=</span> <span style="color:#a6e22e">useItem</span>(<span style="color:#a6e22e">fetchTest</span>(<span style="color:#e6db74">&#34;&#34;</span>))
+</code></pre></div><ul>
+<li>或者可以这样写：</li>
+</ul>
+<blockquote>
+<p>这里<code>request</code>这里传入<code>params</code>，然后<code>useAsync</code>传入<code>promise</code></p>
+<p>这样<code>useItem</code>直接使用传入<code>api</code>就行了。</p>
+</blockquote>
+<p>好了下面这些就不用在看了</p>
+<hr>
+<h2 id="不优雅的错误处理封装">不优雅的错误处理封装</h2>
+<p>对于在用户的操作的过程中，发生的数据的请求或者表单的提交什么的，这时候我们需要展示操作的状态。
+这里我们对于这些反馈信息进行一个不优雅的封装。</p>
+<p>比如说后台系统中最常见的就是各种<code>table</code>，这时候我们正常操作就是用一个变量来记录当前的状态。
+<code>let listLoading = ref(false)</code>我们创建一个loading来记录表格是否在加载中。
+然后接下来我们就不断的修改<code>listLoading</code> <code>true</code> &amp; <code>false</code>。
+看了一下花裤衩，<code>getList</code>改成<code>true</code>,请求完了就改成<code>false</code>。
+这时候我们的页面越来越多，基本上每一个页面上都需要维护这个变量。
+我这边就封装一个并不优雅，可能还不如各个组件各自维护的好的方法。</p>
+<p>先简单点的话，<code>loading</code>会这样变化 <code>false</code> =&gt; <code>true</code> =&gt; <code>false</code>。
+之后结果就成功或者失败。</p>
+<p>数据的请求中，我们一般会有这几种状态，<code>idle</code>,<code>loading</code>,<code>error</code>,<code>success</code>。</p>
+<blockquote>
+<p>但是在vue中感觉没必要这么麻烦</p>
+</blockquote>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ts" data-lang="ts"><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">State</span>&lt;<span style="color:#f92672">T</span>&gt; <span style="color:#f92672">=</span> {
+    <span style="color:#a6e22e">error</span>: <span style="color:#66d9ef">Error</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">null</span>,
+    <span style="color:#a6e22e">data</span>: <span style="color:#66d9ef">T</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">null</span>,
+    <span style="color:#a6e22e">state</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;idle&#34;</span> <span style="color:#f92672">|</span> <span style="color:#e6db74">&#34;loading&#34;</span> <span style="color:#f92672">|</span> <span style="color:#e6db74">&#34;error&#34;</span> <span style="color:#f92672">|</span> <span style="color:#e6db74">&#34;success&#34;</span>
+}
+</code></pre></div><p>先创建一个简单的api请求</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ts" data-lang="ts"><span style="color:#66d9ef">export</span> <span style="color:#66d9ef">type</span> <span style="color:#a6e22e">List</span> <span style="color:#f92672">=</span> {
+    <span style="color:#a6e22e">code</span>: <span style="color:#66d9ef">number</span>,
+    <span style="color:#a6e22e">msg</span>: <span style="color:#66d9ef">string</span>,
+    <span style="color:#a6e22e">data</span>: <span style="color:#66d9ef">data</span>[]
+}
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">type</span> <span style="color:#a6e22e">data</span> <span style="color:#f92672">=</span> {
+    <span style="color:#a6e22e">name</span>: <span style="color:#66d9ef">string</span>,
+    <span style="color:#a6e22e">age</span>: <span style="color:#66d9ef">number</span>
+}
+
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">tableList</span> <span style="color:#f92672">=</span> ()<span style="color:#f92672">:</span> <span style="color:#a6e22e">Promise</span>&lt;<span style="color:#f92672">List</span>&gt; <span style="color:#f92672">=&gt;</span> {
+    <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">Promise</span>((<span style="color:#a6e22e">resolve</span>, <span style="color:#a6e22e">reject</span>) <span style="color:#f92672">=&gt;</span> {
+        <span style="color:#a6e22e">setTimeout</span>(() <span style="color:#f92672">=&gt;</span> {
+            <span style="color:#a6e22e">resolve</span>({
+                <span style="color:#a6e22e">code</span>: <span style="color:#66d9ef">200</span>,
+                <span style="color:#a6e22e">msg</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;ok&#34;</span>,
+                <span style="color:#a6e22e">data</span><span style="color:#f92672">:</span> [
+                    {
+                        <span style="color:#a6e22e">name</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;seagull&#39;</span>,
+                        <span style="color:#a6e22e">age</span>: <span style="color:#66d9ef">17</span>
+                    },
+                    {
+                        <span style="color:#a6e22e">name</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;gaviota&#39;</span>,
+                        <span style="color:#a6e22e">age</span>: <span style="color:#66d9ef">21</span>
+                    }
+                ]
+            });
+        }, <span style="color:#ae81ff">1000</span>);
+    })
+}
+</code></pre></div><p>use-loading.ts文件</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ts" data-lang="ts"><span style="color:#66d9ef">export</span> <span style="color:#66d9ef">default</span> &lt;<span style="color:#f92672">T</span>&gt;() <span style="color:#f92672">=&gt;</span> {
+    <span style="color:#66d9ef">let</span> <span style="color:#a6e22e">loading</span>: <span style="color:#66d9ef">Ref</span>&lt;<span style="color:#f92672">boolean</span>&gt; <span style="color:#f92672">=</span> <span style="color:#a6e22e">ref</span>(<span style="color:#66d9ef">false</span>)
+    <span style="color:#66d9ef">let</span> <span style="color:#a6e22e">data</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">reactive</span>&lt;<span style="color:#f92672">State</span><span style="color:#960050;background-color:#1e0010">&lt;</span><span style="color:#a6e22e">null</span>&gt;<span style="color:#f92672">&gt;</span>({
+        <span style="color:#a6e22e">stat</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;idle&#34;</span>,
+        <span style="color:#a6e22e">data</span>: <span style="color:#66d9ef">null</span>,
+        <span style="color:#a6e22e">error</span>: <span style="color:#66d9ef">null</span>
+    })
+    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">setSuccess</span> <span style="color:#f92672">=</span> (<span style="color:#a6e22e">result</span>: <span style="color:#66d9ef">any</span>) <span style="color:#f92672">=&gt;</span> {
+        <span style="color:#a6e22e">data</span>.<span style="color:#a6e22e">stat</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;success&#34;</span>
+        <span style="color:#a6e22e">data</span>.<span style="color:#a6e22e">data</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">result</span>
+        <span style="color:#a6e22e">data</span>.<span style="color:#a6e22e">error</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">null</span>
+    }
+    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">setError</span> <span style="color:#f92672">=</span> (<span style="color:#a6e22e">error</span>: <span style="color:#66d9ef">Error</span>) <span style="color:#f92672">=&gt;</span> {
+        <span style="color:#a6e22e">data</span>.<span style="color:#a6e22e">stat</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;error&#34;</span>
+        <span style="color:#a6e22e">data</span>.<span style="color:#a6e22e">data</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">null</span>
+        <span style="color:#a6e22e">data</span>.<span style="color:#a6e22e">error</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">error</span>
+    }
+    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">useAsync</span> <span style="color:#f92672">=</span> (<span style="color:#a6e22e">promise</span>: <span style="color:#66d9ef">Promise</span>&lt;<span style="color:#f92672">T</span>&gt;) <span style="color:#f92672">=&gt;</span> {
+        <span style="color:#66d9ef">if</span> (<span style="color:#f92672">!</span><span style="color:#a6e22e">promise</span> <span style="color:#f92672">||</span> <span style="color:#f92672">!</span><span style="color:#a6e22e">promise</span>.<span style="color:#a6e22e">then</span>) {
+            <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> Error(<span style="color:#e6db74">&#34;请传入promise&#34;</span>)
+        }
+        <span style="color:#a6e22e">loading</span>.<span style="color:#a6e22e">value</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">true</span>
+
+        <span style="color:#a6e22e">promise</span>.<span style="color:#a6e22e">then</span>((<span style="color:#a6e22e">res</span>) <span style="color:#f92672">=&gt;</span> {
+            <span style="color:#a6e22e">setSuccess</span>(<span style="color:#a6e22e">res</span>)
+            <span style="color:#a6e22e">loading</span>.<span style="color:#a6e22e">value</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">false</span>
+        })
+            .<span style="color:#66d9ef">catch</span>((<span style="color:#a6e22e">error</span>: <span style="color:#66d9ef">Error</span>) <span style="color:#f92672">=&gt;</span> {
+                <span style="color:#a6e22e">loading</span>.<span style="color:#a6e22e">value</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">false</span>
+                <span style="color:#a6e22e">setError</span>(<span style="color:#a6e22e">error</span>)
+            })
+
+    }
+    <span style="color:#66d9ef">return</span> {
+        <span style="color:#a6e22e">loading</span>,
+        <span style="color:#a6e22e">data</span>,
+        <span style="color:#a6e22e">useAsync</span>
+    }
+
+}
+</code></pre></div><p>使用</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-vue" data-lang="vue">&lt;<span style="color:#f92672">template</span>&gt;
+    &lt;<span style="color:#f92672">div</span>&gt;{{ <span style="color:#a6e22e">loading</span> }}&lt;/<span style="color:#f92672">div</span>&gt;
+    &lt;<span style="color:#f92672">div</span>&gt;{{ <span style="color:#a6e22e">data</span> }}&lt;/<span style="color:#f92672">div</span>&gt;
+    &lt;<span style="color:#f92672">button</span> <span style="color:#f92672">@click</span><span style="color:#e6db74">=&#34;getList&#34;</span>&gt;<span style="color:#a6e22e">请求</span>&lt;/<span style="color:#f92672">button</span>&gt;
+&lt;/<span style="color:#f92672">template</span>&gt;
+&lt;<span style="color:#f92672">script</span> <span style="color:#a6e22e">setup</span> <span style="color:#a6e22e">lang</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;ts&#34;</span>&gt;
+    <span style="color:#66d9ef">const</span> {<span style="color:#a6e22e">loading</span>, <span style="color:#a6e22e">data</span>, <span style="color:#a6e22e">useAsync</span>} <span style="color:#f92672">=</span> <span style="color:#a6e22e">useLoading</span>();
+    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">getList</span> <span style="color:#f92672">=</span> () =&gt; {
+        <span style="color:#a6e22e">useAsync</span>(<span style="color:#a6e22e">tableList</span>())
+    }
+&lt;/<span style="color:#f92672">script</span>&gt;
+</code></pre></div><p>这时候我们点击请求数据的时候，可以看到<code>loading</code>和<code>data</code>状态的变化。</p>
+<p>但是这样就会有问题，如果我们请求两个接口的话后面就会顶掉前一个的了。</p>
+<p>然后我看到了<code>vue-query</code>, 说是实现核心来自于<code>react-query</code>。然后我也没用过。
+所以回归开头，这是啥用都没有的一个封装。
+或许后面可能会有轮子出来，也可能已经有很好的处理方案了，只是我不知道</p>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container has-text-centered">
+    <p>&copy; <a href="https://github.com/pastSeagull">Gaviota</a> 2016</p>
+  </div>
+</section>
+
+
+
+
+
+
+
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+
+
+
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+
+

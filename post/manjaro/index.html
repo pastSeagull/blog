@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>manjaro 的一些配置 | Gaviota</title>
+<link rel="stylesheet" href="https://pastSeagull.github.io/blog//css/style.css">
+
+
+
+<link href="https://cdn.bootcss.com/highlight.js/9.12.0/styles/monokai.min.css" rel="stylesheet">
+
+
+
+
+
+<section class="section">
+  <div class="container">
+    <nav class="nav">
+      <div class="nav-left">
+        <a class="nav-item" href="https://pastSeagull.github.io/blog/"><h1 class="title is-4">Gaviota</h1></a>
+      </div>
+      <div class="nav-right">
+        <nav class="nav-item level is-mobile">
+          
+          <a class="level-item" href="https://github.com/pastSeagull">
+            <span class="icon">
+              <i class="fa fa-github"></i>
+            </span>
+          </a>
+          
+          <a class="level-item" href="https://twitter.com/pastSeagull">
+            <span class="icon">
+              <i class="fa fa-twitter"></i>
+            </span>
+          </a>
+          
+          <a class="level-item" href="/index.xml">
+            <span class="icon">
+              <i class="fa fa-rss"></i>
+            </span>
+          </a>
+          
+        </nav>
+      </div>
+    </nav>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <h2 class="subtitle is-6">December 20, 2020</h2>
+    <h1 class="title">manjaro 的一些配置</h1>
+    <div class="content">
+      <p>为啥又把系统换成回了manjaro了呢，起因是因为win10的system占用我的CPU，然后安全中心一直在扫描病毒占用内存。几年前的垃圾电脑已经无法正常的使用了，打个饥荒都卡成那样了，拖个海妖让我回档了两次？</p>
+<h1 id="manjaro">manjaro</h1>
+<p>然后manjaro配置基本烂大街了，我这就算是记录一下我个人出现的问题,和一些配置啥的。
+先说一下电脑，SSD + HDD，然后系统安装在SSD，不是双系统</p>
+<p>首先win10制作启动盘安装换源啥的就不说了
+换源跟新好了之后开始安装应用报了个错误</p>
+<p><code>/usr/lib/chromium/chromium: /usr/lib/libc.so.6: version </code>GLIBC_2.32' not found (required by /usr/lib/chromium/chromium) `</p>
+<p>然后论坛找到了解决的方法</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s"><span style="color:#f92672">$:</span>  pacman <span style="color:#f92672">-</span>F libc.so.6
+
+core<span style="color:#f92672">/</span>glibc <span style="color:#ae81ff">2.32-5</span> [已安装]
+    usr<span style="color:#f92672">/</span>lib<span style="color:#f92672">/</span>libc.so.6
+core<span style="color:#f92672">/</span>lib32<span style="color:#f92672">-</span>glibc <span style="color:#ae81ff">2.32-5</span> [已安装]
+    usr<span style="color:#f92672">/</span>lib32<span style="color:#f92672">/</span>libc.so.6
+community<span style="color:#f92672">/</span>aarch64<span style="color:#f92672">-</span>linux<span style="color:#f92672">-</span>gnu<span style="color:#f92672">-</span>glibc <span style="color:#ae81ff">2.32-1</span>
+    usr<span style="color:#f92672">/</span>aarch64<span style="color:#f92672">-</span>linux<span style="color:#f92672">-</span>gnu<span style="color:#f92672">/</span>lib<span style="color:#f92672">/</span>libc.so.6
+community<span style="color:#f92672">/</span>riscv64<span style="color:#f92672">-</span>linux<span style="color:#f92672">-</span>gnu<span style="color:#f92672">-</span>glibc <span style="color:#ae81ff">2.32-1</span> (risc<span style="color:#f92672">-</span>v)
+    usr<span style="color:#f92672">/</span>riscv64<span style="color:#f92672">-</span>linux<span style="color:#f92672">-</span>gnu<span style="color:#f92672">/</span>lib<span style="color:#f92672">/</span>libc.so.6
+archlinuxcn<span style="color:#f92672">/</span>arm<span style="color:#f92672">-</span>linux<span style="color:#f92672">-</span>gnueabihf<span style="color:#f92672">-</span>glibc <span style="color:#ae81ff">2.31-1</span>
+    usr<span style="color:#f92672">/</span>arm<span style="color:#f92672">-</span>linux<span style="color:#f92672">-</span>gnueabihf<span style="color:#f92672">/</span>lib<span style="color:#f92672">/</span>libc.so.6
+
+<span style="color:#f92672">$:</span>  pamac upgrade
+<span style="color:#f92672">//</span> 然后开始更新，我不知道是不是我第一次更新炸了还是啥
+
+然后又报了个签名错误
+修改 <span style="color:#f92672">/</span>etc<span style="color:#f92672">/</span>pacman.config
+
+再次更新，又报了个文件已经安装？？？
+然后  su root   rm  直接删除
+
+最后更新，一切正常。
+
+</code></pre></div><p>因为我是双硬盘，然后其他硬盘开机没有挂载进去</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s">sudo fdisk <span style="color:#f92672">-</span>l  <span style="color:#f92672">//</span> 查看硬盘信息看它的数据类型，有需求的话可以直接查一下修改类型，或安装新硬盘上去挂载目录
+
+df <span style="color:#f92672">-</span>h <span style="color:#f92672">//</span> 查看硬盘挂载分区信息
+
+ls <span style="color:#f92672">-</span>al <span style="color:#f92672">/</span>dev<span style="color:#f92672">/</span>disk<span style="color:#f92672">/</span>by<span style="color:#f92672">-</span>uuid    <span style="color:#f92672">//</span> 查询UUID
+
+修改 <span style="color:#f92672">/</span>etc<span style="color:#f92672">/</span>fstab 文件
+
+<span style="color:#f92672">&lt;</span>file system<span style="color:#f92672">&gt;</span>	<span style="color:#f92672">&lt;</span>dir<span style="color:#f92672">&gt;</span>	<span style="color:#f92672">&lt;</span>type<span style="color:#f92672">&gt;</span>	<span style="color:#f92672">&lt;</span>options<span style="color:#f92672">&gt;</span>	<span style="color:#f92672">&lt;</span>dump<span style="color:#f92672">&gt;</span>	<span style="color:#f92672">&lt;</span>pass<span style="color:#f92672">&gt;</span>
+
+
+</code></pre></div><p>好了基本出现的问题就这样了，代理用的是Qv2ray，开始安装软件和环境了。</p>
+<h1 id="node">node</h1>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s">sudo pacman <span style="color:#f92672">-</span>S nodejs npm
+
+<span style="color:#f92672">//</span> 修改npm全局安装包
+
+<span style="color:#f92672">//</span> 查看全局安装包在哪里
+npm root <span style="color:#f92672">-</span>g
+
+npm config set prefix <span style="color:#e6db74">&#39;&#39;</span>
+
+<span style="color:#f92672">//</span> 修改 cache
+npm config set cache <span style="color:#e6db74">&#39;&#39;</span>
+
+<span style="color:#f92672">//</span> 查看一下位置对不对
+npm config ls
+
+<span style="color:#f92672">//</span> yarn 
+
+yarn config  set global<span style="color:#f92672">-</span>folder <span style="color:#e6db74">&#34;&#34;</span>
+
+yarn config set cache<span style="color:#f92672">-</span>folder <span style="color:#e6db74">&#34;&#34;</span>
+
+yarn global dir
+
+export PATH<span style="color:#f92672">=$</span>PATH<span style="color:#f92672">:/</span>run<span style="color:#f92672">/</span>media<span style="color:#f92672">/</span>gaviota<span style="color:#f92672">/</span>F<span style="color:#f92672">/</span>node<span style="color:#f92672">/</span>npm<span style="color:#f92672">/</span>global<span style="color:#f92672">/</span>bin<span style="color:#f92672">/</span>
+
+</code></pre></div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container has-text-centered">
+    <p>&copy; <a href="https://github.com/pastSeagull">Gaviota</a> 2016</p>
+  </div>
+</section>
+
+
+
+
+
+
+
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+
+
+
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+
+

@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>React18 | Gaviota</title>
+<link rel="stylesheet" href="https://pastSeagull.github.io/blog//css/style.css">
+
+
+
+<link href="https://cdn.bootcss.com/highlight.js/9.12.0/styles/monokai.min.css" rel="stylesheet">
+
+
+
+
+
+<section class="section">
+  <div class="container">
+    <nav class="nav">
+      <div class="nav-left">
+        <a class="nav-item" href="https://pastSeagull.github.io/blog/"><h1 class="title is-4">Gaviota</h1></a>
+      </div>
+      <div class="nav-right">
+        <nav class="nav-item level is-mobile">
+          
+          <a class="level-item" href="https://github.com/pastSeagull">
+            <span class="icon">
+              <i class="fa fa-github"></i>
+            </span>
+          </a>
+          
+          <a class="level-item" href="https://twitter.com/pastSeagull">
+            <span class="icon">
+              <i class="fa fa-twitter"></i>
+            </span>
+          </a>
+          
+          <a class="level-item" href="/index.xml">
+            <span class="icon">
+              <i class="fa fa-rss"></i>
+            </span>
+          </a>
+          
+        </nav>
+      </div>
+    </nav>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <h2 class="subtitle is-6">April 1, 2022</h2>
+    <h1 class="title">React18</h1>
+    <div class="content">
+      <p>关于react18的一些笔记啥的</p>
+<p><a href="https://github.com/facebook/react/blob/main/CHANGELOG.md">https://github.com/facebook/react/blob/main/CHANGELOG.md</a></p>
+<p>创建项目 <a href="https://blog.logrocket.com/how-to-use-typescript-with-react-18-alpha/">https://blog.logrocket.com/how-to-use-typescript-with-react-18-alpha/</a></p>
+<h1 id="new-features">New Features</h1>
+<h2 id="useid">useId</h2>
+<blockquote>
+<p>useId is a new hook for generating unique IDs on both the client and server, while avoiding hydration mismatches.
+It is primarily useful for component libraries integrating with accessibility APIs that require unique IDs.
+This solves an issue that already exists in React 17 and below,
+but it’s even more important in React 18 because of how the new streaming server renderer delivers HTML out-of-order.</p>
+</blockquote>
+<p>主要是解决SSR，客户端和服务端上生成唯一的ID，避免两个生成的ID不匹配</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#75715e">// nest
+</span><span style="color:#75715e">// Error: Hydration failed because the initial UI does not match what was rendered on the server.
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">id</span> <span style="color:#f92672">=</span> Math.<span style="color:#a6e22e">random</span>();
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">Test</span> <span style="color:#f92672">=</span> () =&gt; {
+    <span style="color:#66d9ef">return</span> <span style="color:#f92672">&lt;</span><span style="color:#a6e22e">div</span><span style="color:#f92672">&gt;</span>{<span style="color:#a6e22e">id</span>}<span style="color:#f92672">&lt;</span><span style="color:#960050;background-color:#1e0010">/div&gt;</span>
+}
+</code></pre></div><p><code>dehydrate</code>生成的id和<code>hydrate</code>阶段生成的id不匹配
+关于ssr脱水和注水 <a href="https://segmentfault.com/a/1190000038336185">https://segmentfault.com/a/1190000038336185</a></p>
+<h2 id="starttransition">startTransition</h2>
+<blockquote>
+<p>startTransition and useTransition let you mark some state updates as not urgent.
+Other state updates are considered urgent by default.
+React will allow urgent state updates (for example, updating a text input) to interrupt non-urgent state updates (for example, rendering a list of search results).</p>
+</blockquote>
+<p>像我们在web应用中，对于UI的更新先后顺序进行区分，将优先级较低的更新放在后面进行更行</p>
+<p>将一些状态更新记为不紧急，状态更新在默认情况下都是紧急的。</p>
+<p>在<code>startTransition</code>的回调中都是非紧急处理，当如果出现了紧急的更新，则回调中的更新会被中断。
+直到没有其他紧急操作之后在去执行更新
+像下面的demo，优先更新value</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">App</span> <span style="color:#f92672">=</span> () =&gt; {
+  <span style="color:#66d9ef">const</span> [<span style="color:#a6e22e">content</span>, <span style="color:#a6e22e">setContent</span>] <span style="color:#f92672">=</span> <span style="color:#a6e22e">useState</span>(<span style="color:#e6db74">&#34;&#34;</span>);
+  <span style="color:#66d9ef">const</span> [<span style="color:#a6e22e">value</span>, <span style="color:#a6e22e">setInputValue</span>] <span style="color:#f92672">=</span> <span style="color:#a6e22e">useState</span>(<span style="color:#e6db74">&#34;&#34;</span>);
+
+  <span style="color:#66d9ef">return</span> (
+    <span style="color:#f92672">&lt;</span><span style="color:#a6e22e">div</span><span style="color:#f92672">&gt;</span>
+      <span style="color:#f92672">&lt;</span><span style="color:#a6e22e">div</span><span style="color:#f92672">&gt;</span>
+        <span style="color:#f92672">&lt;</span><span style="color:#a6e22e">input</span>
+          <span style="color:#a6e22e">value</span><span style="color:#f92672">=</span>{<span style="color:#a6e22e">value</span>}
+          <span style="color:#a6e22e">onChange</span><span style="color:#f92672">=</span>{(<span style="color:#a6e22e">e</span>) =&gt; {
+            <span style="color:#a6e22e">setInputValue</span>(<span style="color:#a6e22e">e</span>.<span style="color:#a6e22e">target</span>.<span style="color:#a6e22e">value</span>);
+            <span style="color:#75715e">// 使用startTransition
+</span><span style="color:#75715e"></span>            <span style="color:#a6e22e">startTransition</span>(() =&gt; {
+                <span style="color:#a6e22e">setContent</span>(<span style="color:#a6e22e">e</span>.<span style="color:#a6e22e">target</span>.<span style="color:#a6e22e">value</span>);
+            })
+            
+          }}
+        <span style="color:#f92672">/&gt;</span>
+      <span style="color:#f92672">&lt;</span><span style="color:#960050;background-color:#1e0010">/div&gt;</span>
+      <span style="color:#f92672">&lt;</span><span style="color:#a6e22e">div</span><span style="color:#f92672">&gt;</span><span style="color:#a6e22e">优先级高</span><span style="color:#f92672">:</span> {<span style="color:#a6e22e">value</span>}<span style="color:#f92672">&lt;</span><span style="color:#960050;background-color:#1e0010">/div&gt;</span>
+      <span style="color:#f92672">&lt;</span><span style="color:#a6e22e">br</span> <span style="color:#f92672">/&gt;</span>
+      {Array.<span style="color:#a6e22e">from</span>(<span style="color:#66d9ef">new</span> Array(<span style="color:#ae81ff">30000</span>)).<span style="color:#a6e22e">map</span>((<span style="color:#a6e22e">el</span>, <span style="color:#a6e22e">index</span>) =&gt; (
+        <span style="color:#f92672">&lt;</span><span style="color:#a6e22e">div</span> <span style="color:#a6e22e">key</span><span style="color:#f92672">=</span>{<span style="color:#a6e22e">index</span>}<span style="color:#f92672">&gt;</span>{<span style="color:#a6e22e">content</span>}<span style="color:#f92672">&lt;</span><span style="color:#960050;background-color:#1e0010">/div&gt;</span>
+      ))}
+    <span style="color:#f92672">&lt;</span><span style="color:#960050;background-color:#1e0010">/div&gt;</span>
+  );
+}
+</code></pre></div><p>然后我看到了另一个栗子</p>
+<h2 id="usedeferredvalue">useDeferredValue</h2>
+<blockquote>
+<p>useDeferredValue lets you defer re-rendering a non-urgent part of the tree.
+It is similar to debouncing, but has a few advantages compared to it.
+There is no fixed time delay, so React will attempt the deferred render right after the first render is reflected on the screen.
+The deferred render is interruptible and doesn&rsquo;t block user input.</p>
+</blockquote>
+<p>这个api让你推迟重新渲染部分
+类似于防抖，但是它不会像防抖一样会有固定的延迟时间
+先看看一个简单的防抖</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#66d9ef">export</span> <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">useDebounce</span> <span style="color:#f92672">=</span> <span style="color:#f92672">&lt;</span><span style="color:#a6e22e">T</span><span style="color:#f92672">&gt;</span>(<span style="color:#a6e22e">value</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">T</span>, <span style="color:#a6e22e">delay</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">number</span>) =&gt; {
+    <span style="color:#66d9ef">const</span> [<span style="color:#a6e22e">debouncedValue</span>, <span style="color:#a6e22e">setDebouncedValue</span>] <span style="color:#f92672">=</span> <span style="color:#a6e22e">useState</span>(<span style="color:#a6e22e">value</span>);
+    <span style="color:#a6e22e">useEffect</span>(() =&gt; {
+        <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">timeout</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">setTimeout</span>(() =&gt; <span style="color:#a6e22e">setDebouncedValue</span>(<span style="color:#a6e22e">value</span>), <span style="color:#a6e22e">delay</span>);
+        <span style="color:#66d9ef">return</span> () =&gt; <span style="color:#a6e22e">clearTimeout</span>(<span style="color:#a6e22e">timeout</span>);
+      }, [<span style="color:#a6e22e">value</span>, <span style="color:#a6e22e">delay</span>]);
+    
+      <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">debouncedValue</span>;
+}
+
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">Test</span> <span style="color:#f92672">=</span> () =&gt; {
+    <span style="color:#66d9ef">const</span> [<span style="color:#a6e22e">value</span>, <span style="color:#a6e22e">setValue</span>] <span style="color:#f92672">=</span> <span style="color:#a6e22e">useState</span>(<span style="color:#e6db74">&#34;&#34;</span>)
+    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">Text</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">useDebounce</span>(<span style="color:#a6e22e">value</span>, <span style="color:#ae81ff">1000</span>)
+    <span style="color:#66d9ef">return</span> <span style="color:#f92672">&lt;</span><span style="color:#a6e22e">div</span><span style="color:#f92672">&gt;</span>
+        <span style="color:#f92672">&lt;</span><span style="color:#a6e22e">input</span>
+            <span style="color:#a6e22e">value</span><span style="color:#f92672">=</span>{<span style="color:#a6e22e">value</span>}
+            <span style="color:#a6e22e">onChange</span><span style="color:#f92672">=</span>{(<span style="color:#a6e22e">e</span>) =&gt; {
+                <span style="color:#a6e22e">setValue</span>(<span style="color:#a6e22e">e</span>.<span style="color:#a6e22e">target</span>.<span style="color:#a6e22e">value</span>)
+            }}
+        <span style="color:#f92672">/&gt;</span>
+        <span style="color:#f92672">&lt;</span><span style="color:#a6e22e">div</span><span style="color:#f92672">&gt;</span>
+            <span style="color:#a6e22e">Debounce</span><span style="color:#f92672">:</span> {<span style="color:#a6e22e">Text</span>}
+        <span style="color:#f92672">&lt;</span><span style="color:#960050;background-color:#1e0010">/div&gt;</span>
+    <span style="color:#f92672">&lt;</span><span style="color:#960050;background-color:#1e0010">/div&gt;</span>
+}
+</code></pre></div><p>待续&hellip;</p>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container has-text-centered">
+    <p>&copy; <a href="https://github.com/pastSeagull">Gaviota</a> 2016</p>
+  </div>
+</section>
+
+
+
+
+
+
+
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+
+
+
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+
+

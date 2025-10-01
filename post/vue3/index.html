@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vue3 | Gaviota</title>
+<link rel="stylesheet" href="https://pastSeagull.github.io/blog//css/style.css">
+
+
+
+<link href="https://cdn.bootcss.com/highlight.js/9.12.0/styles/monokai.min.css" rel="stylesheet">
+
+
+
+
+
+<section class="section">
+  <div class="container">
+    <nav class="nav">
+      <div class="nav-left">
+        <a class="nav-item" href="https://pastSeagull.github.io/blog/"><h1 class="title is-4">Gaviota</h1></a>
+      </div>
+      <div class="nav-right">
+        <nav class="nav-item level is-mobile">
+          
+          <a class="level-item" href="https://github.com/pastSeagull">
+            <span class="icon">
+              <i class="fa fa-github"></i>
+            </span>
+          </a>
+          
+          <a class="level-item" href="https://twitter.com/pastSeagull">
+            <span class="icon">
+              <i class="fa fa-twitter"></i>
+            </span>
+          </a>
+          
+          <a class="level-item" href="/index.xml">
+            <span class="icon">
+              <i class="fa fa-rss"></i>
+            </span>
+          </a>
+          
+        </nav>
+      </div>
+    </nav>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <h2 class="subtitle is-6">April 14, 2022</h2>
+    <h1 class="title">Vue3</h1>
+    <div class="content">
+      <p>关于Vue3的一些笔记啥的。</p>
+<h2 id="一些区别">一些区别</h2>
+<p>先来看看<code>main.js &amp; app.vue</code>写法上有什么区别吧。
+<code>main.js</code></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#75715e">// vue2
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">import</span> <span style="color:#a6e22e">Vue</span> <span style="color:#a6e22e">from</span> <span style="color:#e6db74">&#39;vue&#39;</span>
+<span style="color:#66d9ef">import</span> <span style="color:#a6e22e">App</span> <span style="color:#a6e22e">from</span> <span style="color:#e6db74">&#39;./App.vue&#39;</span>
+
+<span style="color:#a6e22e">Vue</span>.<span style="color:#a6e22e">config</span>.<span style="color:#a6e22e">productionTip</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">false</span>
+
+<span style="color:#66d9ef">new</span> <span style="color:#a6e22e">Vue</span>({
+<span style="color:#a6e22e">render</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">h</span> =&gt; <span style="color:#a6e22e">h</span>(<span style="color:#a6e22e">App</span>),
+<span style="color:#a6e22e">store</span>,
+<span style="color:#a6e22e">router</span>,
+}).<span style="color:#a6e22e">$mount</span>(<span style="color:#e6db74">&#39;#app&#39;</span>)
+
+<span style="color:#75715e">// vue3
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">import</span> { <span style="color:#a6e22e">createApp</span> } <span style="color:#a6e22e">from</span> <span style="color:#e6db74">&#39;vue&#39;</span>
+<span style="color:#66d9ef">import</span> <span style="color:#a6e22e">App</span> <span style="color:#a6e22e">from</span> <span style="color:#e6db74">&#39;./App.vue&#39;</span>
+
+<span style="color:#a6e22e">createApp</span>(<span style="color:#a6e22e">App</span>).<span style="color:#a6e22e">use</span>(<span style="color:#a6e22e">router</span>).<span style="color:#a6e22e">use</span>(<span style="color:#a6e22e">store</span>).<span style="color:#a6e22e">mount</span>(<span style="color:#e6db74">&#39;#app&#39;</span>)
+</code></pre></div><p>原来的构造函数变成了链式了
+然后我们在来看<code>app.vue</code>的<code>template</code></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#75715e">// vue2
+</span><span style="color:#75715e"></span><span style="color:#f92672">&lt;</span><span style="color:#a6e22e">template</span><span style="color:#f92672">&gt;</span>
+    <span style="color:#f92672">&lt;</span><span style="color:#a6e22e">div</span> <span style="color:#a6e22e">id</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;app&#34;</span><span style="color:#f92672">&gt;</span>
+        <span style="color:#f92672">&lt;</span><span style="color:#a6e22e">img</span> <span style="color:#a6e22e">alt</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Vue logo&#34;</span> <span style="color:#a6e22e">src</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;./assets/logo.png&#34;</span><span style="color:#f92672">&gt;</span>
+            <span style="color:#f92672">&lt;</span><span style="color:#a6e22e">HelloWorld</span> <span style="color:#a6e22e">msg</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Welcome to Your Vue.js App&#34;</span><span style="color:#f92672">/&gt;</span>
+    <span style="color:#f92672">&lt;</span><span style="color:#960050;background-color:#1e0010">/div&gt;</span>
+<span style="color:#f92672">&lt;</span><span style="color:#960050;background-color:#1e0010">/template&gt;</span>
+<span style="color:#75715e">// vue3
+</span><span style="color:#75715e"></span><span style="color:#f92672">&lt;</span><span style="color:#a6e22e">template</span><span style="color:#f92672">&gt;</span>
+  <span style="color:#f92672">&lt;</span><span style="color:#a6e22e">img</span> <span style="color:#a6e22e">alt</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Vue logo&#34;</span> <span style="color:#a6e22e">src</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;./assets/logo.png&#34;</span><span style="color:#f92672">&gt;</span>
+  <span style="color:#f92672">&lt;</span><span style="color:#a6e22e">HelloWorld</span> <span style="color:#a6e22e">msg</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Welcome to Your Vue.js App&#34;</span><span style="color:#f92672">/&gt;</span>
+<span style="color:#f92672">&lt;</span><span style="color:#960050;background-color:#1e0010">/template&gt;</span>
+</code></pre></div><p>可以看到外层嵌套的<code>div</code>标签没了，原来的vue2只能有一个根节点，而vue3支持多根节点</p>
+<blockquote>
+<p>应该是重写了Virtual DOM。
+这篇笔记只记录一些写法和一些api，并不打算看源码得到答案啥的。</p>
+</blockquote>
+<h2 id="setup">setup</h2>
+<p>一些关于setup里的一些用法</p>
+<h3 id="props-context">props context</h3>
+<blockquote>
+<p>接收两个参数<code>props</code> <code>context</code>
+其中props是响应式的，所以不可以使用ES6的解析，解析会消除响应式</p>
+</blockquote>
+<p>可以这样写<code>setup(){}</code>其中<code>context</code>里面包括了<code>this.$attrs, this.$slots, this.$emit</code>。
+也可以这样写<code>setup(props, { attrs, slots, emit }){}</code>
+简单的栗子</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#f92672">&lt;</span><span style="color:#a6e22e">script</span><span style="color:#f92672">&gt;</span>
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">default</span> {
+  <span style="color:#a6e22e">name</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;HelloWorld&#39;</span>,
+  <span style="color:#a6e22e">props</span><span style="color:#f92672">:</span>{
+      <span style="color:#a6e22e">msg</span><span style="color:#f92672">:</span> {
+          <span style="color:#a6e22e">type</span><span style="color:#f92672">:</span> String
+      }
+  },
+  <span style="color:#a6e22e">setup</span>(<span style="color:#a6e22e">props</span>, <span style="color:#a6e22e">context</span>) {
+    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#39;props&#39;</span>, <span style="color:#a6e22e">props</span>.<span style="color:#a6e22e">msg</span>) <span style="color:#75715e">// hello world
+</span><span style="color:#75715e"></span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#39;context&#39;</span>, <span style="color:#a6e22e">context</span>)
+
+    <span style="color:#66d9ef">let</span> <span style="color:#a6e22e">name</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;seagull&#39;</span>
+    <span style="color:#66d9ef">function</span> <span style="color:#a6e22e">sayName</span>() {
+      <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">name</span>)
+    }
+
+    <span style="color:#66d9ef">return</span> {
+      <span style="color:#a6e22e">name</span>,
+      <span style="color:#a6e22e">sayName</span>,
+    }
+  }
+}
+<span style="color:#f92672">&lt;</span><span style="color:#960050;background-color:#1e0010">/script&gt;</span>
+</code></pre></div><h3 id="ref--reactive">ref &amp; reactive</h3>
+<p>ref</p>
+<blockquote>
+<p>接受一个参数值并返回一个响应式且可改变的 ref 对象。ref 对象拥有一个指向内部值的单一属性 .value。</p>
+</blockquote>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#f92672">&lt;</span><span style="color:#a6e22e">script</span><span style="color:#f92672">&gt;</span>
+<span style="color:#66d9ef">import</span> { <span style="color:#a6e22e">ref</span> } <span style="color:#a6e22e">from</span> <span style="color:#e6db74">&#39;vue&#39;</span>
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">default</span> {
+  <span style="color:#a6e22e">name</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;HelloWorld&#39;</span>,
+
+  <span style="color:#a6e22e">setup</span>() {
+    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">age</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">ref</span>(<span style="color:#ae81ff">17</span>)
+
+    <span style="color:#66d9ef">function</span> <span style="color:#a6e22e">updataAge</span>() {
+      <span style="color:#a6e22e">age</span>.<span style="color:#a6e22e">value</span><span style="color:#f92672">++</span>
+    }
+
+    <span style="color:#66d9ef">return</span> {
+      <span style="color:#a6e22e">age</span>,
+      <span style="color:#a6e22e">updataAge</span>
+    }
+  }
+}
+<span style="color:#f92672">&lt;</span><span style="color:#960050;background-color:#1e0010">/script&gt;</span>
+</code></pre></div><p>可以接收一个参数，也可以用来获取DOM节点</p>
+<blockquote>
+<p>这里注意，一定要return出去，不然就获取不到。至于生命周期，下面再说。</p>
+</blockquote>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#f92672">&lt;</span><span style="color:#a6e22e">div</span> <span style="color:#66d9ef">class</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;hello&#34;</span> <span style="color:#a6e22e">ref</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;hello&#34;</span><span style="color:#f92672">&gt;</span><span style="color:#a6e22e">hello</span><span style="color:#f92672">&lt;</span><span style="color:#960050;background-color:#1e0010">/div&gt;</span>
+<span style="color:#a6e22e">setup</span>() {
+    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">hello</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">ref</span>(<span style="color:#66d9ef">null</span>)
+    <span style="color:#a6e22e">onMounted</span>(() =&gt; {
+        <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">hello</span>.<span style="color:#a6e22e">value</span>)
+    })
+    <span style="color:#66d9ef">return</span> {
+        <span style="color:#a6e22e">hello</span>
+    }
+}
+</code></pre></div><ul>
+<li>reactive</li>
+</ul>
+<p>reactive是使用<code>Props</code>来实现的，所以只能传入对象作为参数</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#f92672">&lt;</span><span style="color:#a6e22e">div</span> <span style="color:#a6e22e">v</span><span style="color:#f92672">-</span><span style="color:#66d9ef">for</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;items in userList.item&#34;</span> <span style="color:#f92672">:</span><span style="color:#a6e22e">key</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;items.age&#34;</span><span style="color:#f92672">&gt;</span>{{<span style="color:#a6e22e">items</span>.<span style="color:#a6e22e">name</span>}}, {{<span style="color:#a6e22e">items</span>.<span style="color:#a6e22e">age</span>}}<span style="color:#f92672">&lt;</span><span style="color:#960050;background-color:#1e0010">/div&gt;</span>
+<span style="color:#f92672">&lt;</span><span style="color:#a6e22e">script</span><span style="color:#f92672">&gt;</span>
+    <span style="color:#a6e22e">setup</span>() {
+        <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">userList</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">reactive</span>({
+            <span style="color:#a6e22e">item</span><span style="color:#f92672">:</span> [
+                {
+                    <span style="color:#a6e22e">name</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;name1&#34;</span>,
+                    <span style="color:#a6e22e">age</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">17</span>
+                },
+                {
+                    <span style="color:#a6e22e">name</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;name2&#34;</span>,
+                    <span style="color:#a6e22e">age</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">18</span>
+                },
+                {
+                    <span style="color:#a6e22e">name</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;name3&#34;</span>,
+                    <span style="color:#a6e22e">age</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">19</span>
+                },
+            ]
+        })
+    }
+    <span style="color:#66d9ef">return</span> {
+        <span style="color:#a6e22e">userList</span>
+    }
+<span style="color:#f92672">&lt;</span><span style="color:#960050;background-color:#1e0010">/script&gt;</span>
+</code></pre></div><h3 id="computed-watch-watcheffect">computed watch watchEffect</h3>
+<p>先看<code>computed</code>，一个回调的话默认是<code>get</code>。当然你也自定义<code>get</code>和<code>set</code>。</p>
+<blockquote>
+<p>没记错的话计算属性是根据依赖进行缓存的，当依赖发生改变它才发生改变，那么问题来了，这个set有啥用。不管了先看看栗子吧</p>
+</blockquote>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#f92672">&lt;</span><span style="color:#a6e22e">script</span><span style="color:#f92672">&gt;</span>
+<span style="color:#66d9ef">import</span> { <span style="color:#a6e22e">computed</span>, <span style="color:#a6e22e">reactive</span> } <span style="color:#a6e22e">from</span> <span style="color:#e6db74">&#39;vue&#39;</span>
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">default</span> {
+  <span style="color:#a6e22e">name</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;HelloWorld&#39;</span>,
+
+  <span style="color:#a6e22e">setup</span>() {
+
+    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">calculate</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">reactive</span>({
+        <span style="color:#a6e22e">x</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">1</span>,
+        <span style="color:#a6e22e">y</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">2</span>
+    })
+    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">result</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">computed</span>({
+      <span style="color:#a6e22e">get</span><span style="color:#f92672">:</span> () =&gt; <span style="color:#a6e22e">calculate</span>.<span style="color:#a6e22e">x</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">calculate</span>.<span style="color:#a6e22e">y</span>,
+      <span style="color:#a6e22e">set</span><span style="color:#f92672">:</span> (<span style="color:#a6e22e">val</span>) =&gt; {
+        <span style="color:#a6e22e">calculate</span>.<span style="color:#a6e22e">y</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">val</span>
+      },
+    })
+    <span style="color:#a6e22e">result</span>.<span style="color:#a6e22e">value</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">5</span>
+    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">calculate</span>) <span style="color:#75715e">// x: 1 y: 5 
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">return</span> {
+      <span style="color:#a6e22e">result</span>,
+    }
+  }
+}
+<span style="color:#f92672">&lt;</span><span style="color:#960050;background-color:#1e0010">/script&gt;</span>
+<span style="color:#75715e">// or
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">result</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">computed</span>(()=&gt; {
+    <span style="color:#75715e">// 一个回调 表示get方法
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">calculate</span>.<span style="color:#a6e22e">x</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">calculate</span>.<span style="color:#a6e22e">y</span>
+})
+</code></pre></div><p>接下来看看<code>watch</code>
+可以监听一个或者多个，如果监听多个的话返回的就是数组
+这个回调有三个参数，监听值，<code>new &amp; old</code>数据，还有<code>{ deep: true }</code></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#f92672">&lt;</span><span style="color:#a6e22e">template</span><span style="color:#f92672">&gt;</span>
+  <span style="color:#f92672">&lt;</span><span style="color:#a6e22e">button</span> <span style="color:#960050;background-color:#1e0010">@</span><span style="color:#a6e22e">click</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;count++&#34;</span><span style="color:#f92672">&gt;</span>{{<span style="color:#a6e22e">count</span>}}<span style="color:#f92672">&lt;</span><span style="color:#960050;background-color:#1e0010">/button&gt;</span>
+  <span style="color:#f92672">&lt;</span><span style="color:#a6e22e">button</span> <span style="color:#960050;background-color:#1e0010">@</span><span style="color:#a6e22e">click</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;age++&#34;</span><span style="color:#f92672">&gt;</span>{{<span style="color:#a6e22e">age</span>}}<span style="color:#f92672">&lt;</span><span style="color:#960050;background-color:#1e0010">/button&gt;</span>
+<span style="color:#f92672">&lt;</span><span style="color:#960050;background-color:#1e0010">/template&gt;</span>
+
+<span style="color:#f92672">&lt;</span><span style="color:#a6e22e">script</span><span style="color:#f92672">&gt;</span>
+<span style="color:#66d9ef">import</span> { <span style="color:#a6e22e">watch</span>, <span style="color:#a6e22e">ref</span> } <span style="color:#a6e22e">from</span> <span style="color:#e6db74">&#39;vue&#39;</span>
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">default</span> {
+  <span style="color:#a6e22e">name</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;HelloWorld&#39;</span>,
+
+  <span style="color:#a6e22e">setup</span>() {
+    <span style="color:#66d9ef">let</span> <span style="color:#a6e22e">count</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">ref</span>(<span style="color:#ae81ff">0</span>)
+    <span style="color:#66d9ef">let</span> <span style="color:#a6e22e">age</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">ref</span>(<span style="color:#ae81ff">17</span>)
+    <span style="color:#a6e22e">watch</span>([<span style="color:#a6e22e">count</span>, <span style="color:#a6e22e">age</span>], (<span style="color:#a6e22e">newValue</span>, <span style="color:#a6e22e">oldValue</span>) =&gt; {
+      <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#39;newValue&#39;</span>, <span style="color:#a6e22e">newValue</span>)
+      <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#39;oldValue&#39;</span>, <span style="color:#a6e22e">oldValue</span>)
+    })
+    <span style="color:#66d9ef">return</span> {
+      <span style="color:#a6e22e">count</span>,
+      <span style="color:#a6e22e">age</span>
+    }
+  }
+}
+<span style="color:#f92672">&lt;</span><span style="color:#960050;background-color:#1e0010">/script&gt;</span>
+</code></pre></div><p>监听reactive
+这里监听<code>reactive</code>时<code>deep</code>强制是<code>true</code>，无法关闭。</p>
+<blockquote>
+<p>还有就是<code>new &amp; old</code>数据都是一样的，无法正确获取到oldValue</p>
+</blockquote>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#f92672">&lt;</span><span style="color:#a6e22e">template</span><span style="color:#f92672">&gt;</span>
+  <span style="color:#f92672">&lt;</span><span style="color:#a6e22e">button</span> <span style="color:#960050;background-color:#1e0010">@</span><span style="color:#a6e22e">click</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;info.name += &#39;1&#39;&#34;</span><span style="color:#f92672">&gt;</span>{{<span style="color:#a6e22e">info</span>.<span style="color:#a6e22e">name</span>}}<span style="color:#f92672">&lt;</span><span style="color:#960050;background-color:#1e0010">/button&gt;</span>
+  <span style="color:#f92672">&lt;</span><span style="color:#a6e22e">button</span> <span style="color:#960050;background-color:#1e0010">@</span><span style="color:#a6e22e">click</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;info.age++&#34;</span><span style="color:#f92672">&gt;</span>{{<span style="color:#a6e22e">info</span>.<span style="color:#a6e22e">age</span>}}<span style="color:#f92672">&lt;</span><span style="color:#960050;background-color:#1e0010">/button&gt;</span>
+
+  <span style="color:#f92672">&lt;</span><span style="color:#a6e22e">div</span> <span style="color:#a6e22e">v</span><span style="color:#f92672">-</span><span style="color:#66d9ef">for</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;(item, index) in info.catColor&#34;</span> <span style="color:#f92672">:</span><span style="color:#a6e22e">key</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;index&#34;</span><span style="color:#f92672">&gt;</span>{{<span style="color:#a6e22e">item</span>}}<span style="color:#f92672">&lt;</span><span style="color:#960050;background-color:#1e0010">/div&gt;</span>
+  <span style="color:#f92672">&lt;</span><span style="color:#a6e22e">button</span> <span style="color:#960050;background-color:#1e0010">@</span><span style="color:#a6e22e">click</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;updataColor&#34;</span><span style="color:#f92672">&gt;</span><span style="color:#a6e22e">add</span> <span style="color:#a6e22e">color</span><span style="color:#f92672">&lt;</span><span style="color:#960050;background-color:#1e0010">/button&gt;</span>
+<span style="color:#f92672">&lt;</span><span style="color:#960050;background-color:#1e0010">/template&gt;</span>
+
+<span style="color:#f92672">&lt;</span><span style="color:#a6e22e">script</span><span style="color:#f92672">&gt;</span>
+<span style="color:#66d9ef">import</span> { <span style="color:#a6e22e">watch</span>, <span style="color:#a6e22e">reactive</span> } <span style="color:#a6e22e">from</span> <span style="color:#e6db74">&#39;vue&#39;</span>
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">default</span> {
+  <span style="color:#a6e22e">name</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;HelloWorld&#39;</span>,
+
+  <span style="color:#a6e22e">setup</span>() {
+    <span style="color:#66d9ef">let</span> <span style="color:#a6e22e">info</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">reactive</span>({
+      <span style="color:#a6e22e">name</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;seagull&#39;</span>,
+      <span style="color:#a6e22e">age</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">17</span>,
+      <span style="color:#a6e22e">catColor</span><span style="color:#f92672">:</span> [
+        <span style="color:#e6db74">&#39;black&#39;</span>,
+        <span style="color:#e6db74">&#39;white&#39;</span>
+      ]
+    })
+    <span style="color:#66d9ef">function</span> <span style="color:#a6e22e">updataColor</span>() {
+      <span style="color:#a6e22e">info</span>.<span style="color:#a6e22e">catColor</span>.<span style="color:#a6e22e">push</span>(<span style="color:#e6db74">&#39;yellow&#39;</span>)
+    }
+    <span style="color:#a6e22e">watch</span>(<span style="color:#a6e22e">info</span>, (<span style="color:#a6e22e">newValue</span>, <span style="color:#a6e22e">oldValue</span>) =&gt; {
+      <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#39;newValue&#39;</span>, <span style="color:#a6e22e">newValue</span>)
+      <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#39;oldValue&#39;</span>, <span style="color:#a6e22e">oldValue</span>)
+    })
+    <span style="color:#66d9ef">return</span> {
+      <span style="color:#a6e22e">info</span>,
+      <span style="color:#a6e22e">updataColor</span>
+    }
+  }
+}
+<span style="color:#f92672">&lt;</span><span style="color:#960050;background-color:#1e0010">/script&gt;</span>
+<span style="color:#75715e">// 不可以监听单个
+</span><span style="color:#75715e"></span><span style="color:#a6e22e">watch</span>(<span style="color:#a6e22e">info</span>.<span style="color:#a6e22e">name</span>, (<span style="color:#a6e22e">newValue</span>, <span style="color:#a6e22e">oldValue</span>) =&gt; {
+    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#39;newValue&#39;</span>, <span style="color:#a6e22e">newValue</span>)
+    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#39;oldValue&#39;</span>, <span style="color:#a6e22e">oldValue</span>)
+})
+<span style="color:#75715e">// 这样
+</span><span style="color:#75715e"></span><span style="color:#a6e22e">watch</span>(() =&gt; <span style="color:#a6e22e">info</span>.<span style="color:#a6e22e">name</span>, (<span style="color:#a6e22e">newValue</span>, <span style="color:#a6e22e">oldValue</span>) =&gt; {
+    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#39;newValue&#39;</span>, <span style="color:#a6e22e">newValue</span>)
+    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#39;oldValue&#39;</span>, <span style="color:#a6e22e">oldValue</span>)
+})
+<span style="color:#75715e">// 多个
+</span><span style="color:#75715e"></span><span style="color:#a6e22e">watch</span>([() =&gt; <span style="color:#a6e22e">info</span>.<span style="color:#a6e22e">name</span>, () =&gt; <span style="color:#a6e22e">info</span>.<span style="color:#a6e22e">age</span>], (<span style="color:#a6e22e">newValue</span>, <span style="color:#a6e22e">oldValue</span>) =&gt; {
+    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#39;newValue&#39;</span>, <span style="color:#a6e22e">newValue</span>)
+    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#39;oldValue&#39;</span>, <span style="color:#a6e22e">oldValue</span>)
+})
+</code></pre></div><p>还有个<code>watchEffect</code>
+还是上面那个栗子，把<code>watch</code>换成了<code>watchEffect</code></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#a6e22e">watchEffect</span>(() =&gt; {
+  <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#39;effect&#39;</span>, <span style="color:#a6e22e">info</span>.<span style="color:#a6e22e">age</span>)
+})
+<span style="color:#75715e">// 停止监听
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">stop</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">watchEffect</span>(() =&gt; {
+    <span style="color:#75715e">/* ... */</span>
+})
+
+<span style="color:#a6e22e">stop</span>()
+</code></pre></div><p>这时候刷新一下，可以看到控制已经<code>console</code>出来了，然后我们每点击增加一次<code>info.age</code>
+这里都会重新打印一下。这和<code>watch</code>有啥不同。</p>
+<ul>
+<li>首先我们不需要指定监听的属性，它会自动收集，当属性改变的时候，执行一次回调。</li>
+<li>watch可以获得新旧值，<code>watchEffect</code>获取不了</li>
+<li>组件初始化的时候它会执行一次回调</li>
+</ul>
+<p>当然你不停止监听，在组件取消挂载的时候会自动停掉的。</p>
+<h2 id="生命周期">生命周期</h2>
+<p>和原来也差不多，还是分为这几个阶段</p>
+<ul>
+<li>创建 — 在组件创建时执行</li>
+<li>挂载 — DOM 被挂载时执行</li>
+<li>更新 — 当响应数据被修改时执行</li>
+<li>销毁 — 在元素被销毁之前立即运行</li>
+</ul>
+<p>多了这几个
+首先是<code>renderTracked</code>，就是DOM重新渲染的时候会调用。官网介绍是这样的</p>
+<blockquote>
+<p>当虚拟 DOM 重新渲染为 triggered.Similarly 为renderTracked，接收 debugger event 作为参数。
+此事件告诉你是什么操作触发了重新渲染，以及该操作的目标对象和键。
+这时候我们改一下上面的栗子</p>
+</blockquote>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#f92672">&lt;</span><span style="color:#a6e22e">template</span><span style="color:#f92672">&gt;</span>
+  <span style="color:#f92672">&lt;</span><span style="color:#a6e22e">button</span> <span style="color:#960050;background-color:#1e0010">@</span><span style="color:#a6e22e">click</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;info.name += &#39;1&#39;&#34;</span><span style="color:#f92672">&gt;</span>{{<span style="color:#a6e22e">info</span>.<span style="color:#a6e22e">name</span>}}<span style="color:#f92672">&lt;</span><span style="color:#960050;background-color:#1e0010">/button&gt;</span>
+  <span style="color:#f92672">&lt;</span><span style="color:#a6e22e">button</span> <span style="color:#960050;background-color:#1e0010">@</span><span style="color:#a6e22e">click</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;info.age++&#34;</span><span style="color:#f92672">&gt;</span>{{<span style="color:#a6e22e">info</span>.<span style="color:#a6e22e">age</span>}}<span style="color:#f92672">&lt;</span><span style="color:#960050;background-color:#1e0010">/button&gt;</span>
+
+  <span style="color:#f92672">&lt;</span><span style="color:#a6e22e">div</span> <span style="color:#a6e22e">v</span><span style="color:#f92672">-</span><span style="color:#66d9ef">for</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;(item, index) in info.catColor&#34;</span> <span style="color:#f92672">:</span><span style="color:#a6e22e">key</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;index&#34;</span><span style="color:#f92672">&gt;</span>{{<span style="color:#a6e22e">item</span>}}<span style="color:#f92672">&lt;</span><span style="color:#960050;background-color:#1e0010">/div&gt;</span>
+  <span style="color:#f92672">&lt;</span><span style="color:#a6e22e">button</span> <span style="color:#960050;background-color:#1e0010">@</span><span style="color:#a6e22e">click</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;updataColor&#34;</span><span style="color:#f92672">&gt;</span><span style="color:#a6e22e">add</span> <span style="color:#a6e22e">color</span><span style="color:#f92672">&lt;</span><span style="color:#960050;background-color:#1e0010">/button&gt;</span>
+<span style="color:#f92672">&lt;</span><span style="color:#960050;background-color:#1e0010">/template&gt;</span>
+
+<span style="color:#f92672">&lt;</span><span style="color:#a6e22e">script</span><span style="color:#f92672">&gt;</span>
+<span style="color:#66d9ef">import</span> { <span style="color:#a6e22e">reactive</span>, <span style="color:#a6e22e">onRenderTracked</span> } <span style="color:#a6e22e">from</span> <span style="color:#e6db74">&#39;vue&#39;</span>
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">default</span> {
+  <span style="color:#a6e22e">name</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;HelloWorld&#39;</span>,
+
+  <span style="color:#a6e22e">setup</span>() {
+    <span style="color:#66d9ef">let</span> <span style="color:#a6e22e">info</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">reactive</span>({
+      <span style="color:#a6e22e">name</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;seagull&#39;</span>,
+      <span style="color:#a6e22e">age</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">17</span>,
+      <span style="color:#a6e22e">catColor</span><span style="color:#f92672">:</span> [
+        <span style="color:#e6db74">&#39;black&#39;</span>,
+        <span style="color:#e6db74">&#39;white&#39;</span>
+      ]
+    })
+    <span style="color:#66d9ef">function</span> <span style="color:#a6e22e">updataColor</span>() {
+      <span style="color:#a6e22e">info</span>.<span style="color:#a6e22e">catColor</span>.<span style="color:#a6e22e">push</span>(<span style="color:#e6db74">&#39;yellow&#39;</span>)
+    }
+    <span style="color:#a6e22e">onRenderTracked</span>(({ <span style="color:#a6e22e">key</span>, <span style="color:#a6e22e">target</span>, <span style="color:#a6e22e">type</span> }) =&gt; {
+      <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>({ <span style="color:#a6e22e">key</span>, <span style="color:#a6e22e">target</span>, <span style="color:#a6e22e">type</span> })
+      <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#34;renderTracked&#34;</span>)
+    })
+    <span style="color:#66d9ef">return</span> {
+      <span style="color:#a6e22e">info</span>,
+      <span style="color:#a6e22e">updataColor</span>
+    }
+  }
+}
+<span style="color:#f92672">&lt;</span><span style="color:#960050;background-color:#1e0010">/script&gt;</span>
+</code></pre></div><p>这时候控制台是这样的, 总共执行了6次
+<img src="https://raw.githubusercontent.com/pastSeagull/blog/main/img/onRenderTracked.png" alt="avatar"></p>
+<p>这时候我们点击更改<code>name &amp; age</code>，都没有执行。当更改<code>catColor</code>的时候这个生命周期触发了。
+所以说这个<code>catColor</code>总共重新渲染了四次？</p>
+<p>还有这个<code>renderTriggered</code>和上面那个应该算是一对把。</p>
+<blockquote>
+<p>当虚拟 DOM 重新渲染为 triggered.Similarly 为renderTracked，接收 debugger event 作为参数。
+此事件告诉你是什么操作触发了重新渲染，以及该操作的目标对象和键。</p>
+</blockquote>
+<p>在上面的栗子添加代码</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#a6e22e">onRenderTriggered</span>(({ <span style="color:#a6e22e">key</span>, <span style="color:#a6e22e">target</span>, <span style="color:#a6e22e">type</span> }) =&gt; {
+  <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#39;---------onRenderTriggered&#39;</span>, { <span style="color:#a6e22e">key</span>, <span style="color:#a6e22e">target</span>, <span style="color:#a6e22e">type</span> })
+})
+</code></pre></div><p>这时候我们改变<code>name &amp; age</code>都会触发这个生命周期。当我们改变<code>catColot</code>时，两个都触发了。
+这两个新增的生命周期应该懂了吧。
+最后在<code>setup(){}</code>里，生命周期是这样写的</p>
+<ul>
+<li>beforeCreate===&gt;Not needed*</li>
+<li>created=======&gt;Not needed*</li>
+<li>beforeMount ===&gt;onBeforeMount</li>
+<li>mounted=======&gt;onMounted</li>
+<li>beforeUpdate===&gt;onBeforeUpdate</li>
+<li>updated =======&gt;onUpdated</li>
+<li>beforeUnmount ==&gt;onBeforeUnmount</li>
+<li>unmounted =====&gt;onUnmounted</li>
+</ul>
+<p>当然还更新了很多，具体还是看看官方文档吧。</p>
+<h2 id="参考">参考</h2>
+<hr>
+<ol>
+<li><a href="https://juejin.cn/post/7030992475271495711#heading-31">vue3保姆级教程</a></li>
+<li><a href="https://segmentfault.com/a/1190000023669309">浅谈Vue3的watchEffect用途</a></li>
+<li><a href="https://juejin.cn/post/6945606524987244558#heading-17">Vue 3 生命周期完整指南</a></li>
+<li><a href="https://juejin.cn/post/7020017329815683085">Vue3生命周期详解</a></li>
+</ol>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container has-text-centered">
+    <p>&copy; <a href="https://github.com/pastSeagull">Gaviota</a> 2016</p>
+  </div>
+</section>
+
+
+
+
+
+
+
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+
+
+
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+
+
